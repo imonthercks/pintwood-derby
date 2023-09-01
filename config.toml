@@ -9,7 +9,7 @@ defaultContentLanguage = "en"
 theme = "hugo-scroll"
 
 # The browser tab name
-title = "SEAS Pinewood Derby"
+title = "SEAS Pintwood Derby"
 
 # In order to add version information in the page's footer set to true.
 # enableGitInfo = true
@@ -35,7 +35,7 @@ title = "SEAS Pinewood Derby"
     # Another "title" :-). This one is used as the site_name on the Hugo's internal
     # opengraph structured data template.
     # See https://ogp.me/ and https://gohugo.io/templates/internal#open-graph.
-    title = "SEAS Pinewood Derby"
+    title = "SEAS Pintwood Derby"
 
     # The "description" of your website. This is used in the meta data of your generated html.
     description = "Nutrition Coach & Chef Consultant"
