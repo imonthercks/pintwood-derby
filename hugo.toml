@@ -1,0 +1,4 @@
+baseURL = 'https://thepintwood.com/'
+languageCode = 'en-us'
+title = 'SEAS Pintwood Derby'
+theme = 'hugo-scroll'
