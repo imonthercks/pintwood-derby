@@ -11,13 +11,14 @@ exports.handler = async function (event, context) {
     const sheets = google.sheets({ version: 'v4', auth: serviceKeyJson });
 
     // Parse the incoming form data (assuming it's in JSON format)
-    const formData = JSON.parse(event.body);
+    const formData = JSON.parse(event.body.payload?.data);
     console.log(formData);
 
     // Define the spreadsheetId and range
     const spreadsheetId = process.env.REGISTRATION_SPREADSHEET_ID;
     const range = process.env.REGISTRATION_SHEET_NAME; // Change to your sheet's name
 
+    console.log({spreadsheetId, range});
     // Prepare the data and headers
     const headers = Object.keys(formData); // Use form field names as headers
     console.log(headers);
