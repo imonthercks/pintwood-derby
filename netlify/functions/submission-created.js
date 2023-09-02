@@ -12,6 +12,7 @@ exports.handler = async function (event, context) {
 
     // Parse the incoming form data (assuming it's in JSON format)
     const formData = JSON.parse(event.body);
+    console.log(formData);
 
     // Define the spreadsheetId and range
     const spreadsheetId = process.env.REGISTRATION_SPREADSHEET_ID;
@@ -19,7 +20,9 @@ exports.handler = async function (event, context) {
 
     // Prepare the data and headers
     const headers = Object.keys(formData); // Use form field names as headers
+    console.log(headers);
     const values = [headers.map((header) => formData[header])];
+    console.log(values);
 
     // Call the Sheets API to append the data
     await sheets.spreadsheets.values.append({
