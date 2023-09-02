@@ -52,7 +52,7 @@ header_menu: true
     <input type="text" id="name" name="name" required><br><br>
 
     <label for="numRacers">Number of Racers:</label>
-    <input type="number" id="numRacers" name="numRacers" min="1" required><br><br>
+    <input type="number" id="numRacers" name="numRacers" min="1" max="5" required><br><br>
 
     <label for="numSpectators">Number of Spectators:</label>
     <input type="number" id="numSpectators" name="numSpectators" min="0" required><br><br>
@@ -69,12 +69,15 @@ header_menu: true
     </div>
 
     <label for="sponsorship">Would you like to be a sponsor?</label>
-    <input type="checkbox" id="sponsorship" name="sponsorship" value="yes">
-    <br><br>
+        <select id="sponsorship" name="sponsorship">
+            <option selected value="no">No</option>
+            <option value="yes">Yes</option>
+        </select><br><br>
 
     <div id="sponsorshipFields" style="display: none;">
-        <label for="sponsorName">Sponsor Name:</label>
-        <input type="text" id="sponsorName" name="sponsorName"><br><br>
+       <label for="sponsorName">Sponsor Name:</label>
+        <input type="text" id="sponsorName" name="sponsorName">
+        <br><br>
 
         <label for="sponsorLevel">Select Sponsorship Level:</label>
         <select id="sponsorLevel" name="sponsorLevel">
@@ -94,7 +97,7 @@ header_menu: true
         const sponsorshipFields = document.getElementById("sponsorshipFields");
 
         sponsorshipCheckbox.addEventListener("change", () => {
-            if (sponsorshipCheckbox.checked) {
+            if (sponsorshipCheckbox.value === "yes") {
                 sponsorshipFields.style.display = "block";
             } else {
                 sponsorshipFields.style.display = "none";
