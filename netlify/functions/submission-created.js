@@ -12,7 +12,7 @@ exports.handler = async function (event, context) {
 
     // Parse the incoming form data (assuming it's in JSON format)
     const formData = JSON.parse(event.body.payload?.data);
-    console.log(event);
+    console.log(event.body);
 
     // Define the spreadsheetId and range
     const spreadsheetId = process.env.REGISTRATION_SPREADSHEET_ID;
@@ -20,7 +20,7 @@ exports.handler = async function (event, context) {
 
     console.log(`spreadsheetId: ${spreadsheetId}`);
     console.log(`range: ${range}`);
-    
+
     // Prepare the data and headers
     const headers = Object.keys(formData); // Use form field names as headers
     console.log(`headers: ${JSON.stringify(headers)}`);
