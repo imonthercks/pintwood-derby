@@ -54,7 +54,7 @@ exports.handler = async function (event, context) {
     // console.log('header write complete.');
 
     await doc.loadInfo();
-    const sheet = doc.sheetsByTitle[REGISTRATION_SHEET_NAME] ?? doc.addSheet({title: REGISTRATION_SHEET_NAME, headerValues: headers});
+    const sheet = doc.sheetsByTitle[REGISTRATION_SHEET_NAME] ?? await doc.addSheet({title: REGISTRATION_SHEET_NAME, headerValues: headers});
     console.log('writing data...');
     // Append the actual data below the headers
     await sheet.addRow(formData);
