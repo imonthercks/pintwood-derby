@@ -12,7 +12,7 @@ exports.handler = async function (event, context) {
 
     // Parse the incoming form data (assuming it's in JSON format)
     const formData = JSON.parse(event.body.payload?.data);
-    console.log(event.body);
+    //console.log(event.body);
 
     // Define the spreadsheetId and range
     const spreadsheetId = process.env.REGISTRATION_SPREADSHEET_ID;
