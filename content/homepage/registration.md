@@ -66,6 +66,41 @@ header_menu: true
     <p>Select the category of car for each racer:</p>
     <div id="carCategories">
         <!-- JavaScript will dynamically add car category fields based on the number of racers -->
+        <div id="car1CategoryFields" style="display: none;">
+        <label for="car1Category">Car #1:</label>
+        <select id="car1Category" name="car1Category">
+            <option value="stock">Stock</option>
+            <option value="outlaw">Outlaw</option>
+        </select><br>
+        </div>
+        <div id="car2CategoryFields" style="display: none;">
+        <label for="car2Category">Car #2:</label>
+        <select id="car2Category" name="car2Category">
+            <option value="stock">Stock</option>
+            <option value="outlaw">Outlaw</option>
+        </select><br>
+        </div>
+        <div id="car3CategoryFields" style="display: none;">
+        <label for="car3Category">Car #3:</label>
+        <select id="car3Category" name="car3Category">
+            <option value="stock">Stock</option>
+            <option value="outlaw">Outlaw</option>
+        </select><br>
+        </div>
+        <div id="car4CategoryFields" style="display: none;">
+        <label for="car4Category">Car #4:</label>
+        <select id="car4Category" name="car4Category">
+            <option value="stock">Stock</option>
+            <option value="outlaw">Outlaw</option>
+        </select><br>
+        </div>
+        <div id="car5CategoryFields" style="display: none;">
+        <label for="car5Category">Car #5:</label>
+        <select id="car5Category" name="car5Category">
+            <option value="stock">Stock</option>
+            <option value="outlaw">Outlaw</option>
+        </select><br>
+        </div>
     </div>
 
     <label for="sponsorship">Would you like to be a sponsor?</label>
@@ -81,6 +116,7 @@ header_menu: true
 
         <label for="sponsorLevel">Select Sponsorship Level:</label>
         <select id="sponsorLevel" name="sponsorLevel">
+            <option value="">-- Choose one --</option>
             <option value="Starting Line - $200">Starting Line - $200</option>
             <option value="Yellow Flag - $300">Yellow Flag - $300</option>
             <option value="Pit Row - $500">Pit Row - $500</option>
@@ -109,26 +145,13 @@ header_menu: true
         const carCategoriesDiv = document.getElementById("carCategories");
 
         numRacersInput.addEventListener("input", () => {
-            const numRacers = numRacersInput.value;
-            carCategoriesDiv.innerHTML = ""; // Clear previous car category fields
+            if (numRacersInput.value.trim() === "") retnrn;
+            const numRacers = Math.floor(numRacersInput.value, 5);
 
-            for (let i = 1; i <= numRacers; i++) {
-                const label = document.createElement("label");
-                label.textContent = `Car Category for Racer ${i}:`;
-                const select = document.createElement("select");
-                select.name = `carCategory${i}`;
-                const stockOption = document.createElement("option");
-                stockOption.value = "stock";
-                stockOption.textContent = "Stock";
-                const unlimitedOption = document.createElement("option");
-                unlimitedOption.value = "unlimited";
-                unlimitedOption.textContent = "Unlimited";
-                select.appendChild(stockOption);
-                select.appendChild(unlimitedOption);
-
-                carCategoriesDiv.appendChild(label);
-                carCategoriesDiv.appendChild(select);
-                carCategoriesDiv.appendChild(document.createElement("br"));
+            for (let i = 1; i <= 5; i++) {
+                const fieldName = 'car' + i + 'CategoryFields';
+                const carCategoryFields = document.getElementById(fieldName);
+                carCategoryFields.style.display = (i <= numRacers) ? "block" : "none";
             }
         });
     </script>
