@@ -28,7 +28,7 @@ exports.handler = async function (event, context) {
     // Call the Sheets API to append the data
     console.log('writing header...');
     await sheets.spreadsheets.values.append({
-      REGISTRATION_SPREADSHEET_ID,
+      spreadsheetId: REGISTRATION_SPREADSHEET_ID,
       range: `${REGISTRATION_SHEET_NAME}!A:A`, // Specify the range for the headers (e.g., column A)
       valueInputOption: 'RAW',
       resource: {
@@ -40,7 +40,7 @@ exports.handler = async function (event, context) {
     console.log('writing data...');
     // Append the actual data below the headers
     await sheets.spreadsheets.values.append({
-      REGISTRATION_SPREADSHEET_ID,
+      spreadsheetId: REGISTRATION_SPREADSHEET_ID,
       range: `${REGISTRATION_SHEET_NAME}!A2`, // Start from the second row (assuming headers are in the first row)
       valueInputOption: 'RAW',
       resource: {
