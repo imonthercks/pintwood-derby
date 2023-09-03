@@ -1,6 +1,5 @@
 {
   "dependencies": {
-    "google-auth-library": "^9.0.0",
     "google-spreadsheet": "^4.0.2",
     "googleapis": "^126.0.1"
   }
