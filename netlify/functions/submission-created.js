@@ -26,6 +26,7 @@ exports.handler = async function (event, context) {
     console.log(`values: ${JSON.stringify(values)}`);
     
     // Call the Sheets API to append the data
+    console.log('writing header...');
     await sheets.spreadsheets.values.append({
       spreadsheetId,
       range: `${sheetName}!A:A`, // Specify the range for the headers (e.g., column A)
@@ -34,7 +35,9 @@ exports.handler = async function (event, context) {
         values: headers,
       },
     });
+    console.log('header write complete.');
 
+    console.log('writing data...');
     // Append the actual data below the headers
     await sheets.spreadsheets.values.append({
       spreadsheetId,
@@ -44,12 +47,14 @@ exports.handler = async function (event, context) {
         values,
       },
     });
+    console.log('data write complete.');
 
     return {
       statusCode: 200,
       body: JSON.stringify({ message: 'Data added to Google Sheet' }),
     };
   } catch (error) {
+    console.log(error);
     return {
       statusCode: 500,
       body: JSON.stringify({ error: 'Error adding data to Google Sheet' }),
