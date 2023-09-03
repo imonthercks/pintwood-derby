@@ -61,7 +61,7 @@ header_menu: true
     <input type="email" id="email" name="email" required><br><br>
 
     <label for="phone">Phone:</label>
-    <input type="tel" id="phone" name="phone" pattern="[0-9]{10}" required><br><br>
+    <input type="tel" id="phone" name="phone" pattern="[0-9]{11}" required><br><br>
 
     <p>Select the category of car for each racer:</p>
     <div id="carCategories">
