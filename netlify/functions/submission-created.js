@@ -1,21 +1,27 @@
 // addToGoogleSheet.js
 
-const { google } = require('googleapis');
+//const { google } = require('googleapis');
+const { GoogleSpreadsheet } = require('google-spreadsheet');
 const process = require('process')
 
 exports.handler = async function (event, context) {
   try {
     // Load environment variables
-    const {REGISTRATION_SPREADSHEET_ID, REGISTRATION_SHEET_NAME, GOOGLE_SERVICE_KEY_JSON} = process.env;
-    
+    const { REGISTRATION_SPREADSHEET_ID, REGISTRATION_SHEET_NAME, GOOGLE_SERVICE_KEY_JSON } = process.env;
+
     // Set up the Google Sheets API using the JSON key
-    const sheets = google.sheets({ version: 'v4', auth: GOOGLE_SERVICE_KEY_JSON });
+    const doc = new GoogleSpreadsheet(process.env.GOOGLE_SHEETS_DOCUMENT_ID);
+    await doc.useServiceAccountAuth({
+      client_email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
+      private_key: process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, "\n")
+    });
+    //const sheets = google.sheets({ version: 'v4', auth: GOOGLE_SERVICE_KEY_JSON });
 
     // Parse the incoming form data (assuming it's in JSON format)
     const formData = JSON.parse(event.body).payload.data;
     console.log(JSON.stringify(formData));
 
-    
+
     console.log(`spreadsheetId: ${REGISTRATION_SPREADSHEET_ID}`);
     console.log(`range: ${REGISTRATION_SHEET_NAME}`);
 
@@ -24,29 +30,31 @@ exports.handler = async function (event, context) {
     console.log(`headers: ${JSON.stringify(headers)}`);
     const values = headers.map((header) => formData[header]);
     console.log(`values: ${JSON.stringify(values)}`);
-    
-    // Call the Sheets API to append the data
-    console.log('writing header...');
-    await sheets.spreadsheets.values.append({
-      spreadsheetId: REGISTRATION_SPREADSHEET_ID,
-      range: `${REGISTRATION_SHEET_NAME}!A:A`, // Specify the range for the headers (e.g., column A)
-      valueInputOption: 'RAW',
-      resource: {
-        values: headers,
-      },
-    });
-    console.log('header write complete.');
 
+    // Call the Sheets API to append the data
+    // console.log('writing header...');
+    // await sheets.spreadsheets.values.append({
+    //   spreadsheetId: REGISTRATION_SPREADSHEET_ID,
+    //   range: `${REGISTRATION_SHEET_NAME}!A:A`, // Specify the range for the headers (e.g., column A)
+    //   valueInputOption: 'RAW',
+    //   resource: {
+    //     values: headers,
+    //   },
+    // });
+    // console.log('header write complete.');
+
+    const sheet = doc.sheetsByTitle[REGISTRATION_SHEET_NAME];
     console.log('writing data...');
     // Append the actual data below the headers
-    await sheets.spreadsheets.values.append({
-      spreadsheetId: REGISTRATION_SPREADSHEET_ID,
-      range: `${REGISTRATION_SHEET_NAME}!A2`, // Start from the second row (assuming headers are in the first row)
-      valueInputOption: 'RAW',
-      resource: {
-        values,
-      },
-    });
+    await sheet.addRow(formData);
+    // await sheets.spreadsheets.values.append({
+    //   spreadsheetId: REGISTRATION_SPREADSHEET_ID,
+    //   range: `${REGISTRATION_SHEET_NAME}!A2`, // Start from the second row (assuming headers are in the first row)
+    //   valueInputOption: 'RAW',
+    //   resource: {
+    //     values,
+    //   },
+    // });
     console.log('data write complete.');
 
     return {
