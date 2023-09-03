@@ -2,7 +2,7 @@
 
 //const { google } = require('googleapis');
 const { GoogleSpreadsheet } = require('google-spreadsheet');
-import { JWT } from 'google-auth-library';
+const { JWT } = require('google-auth-library');
 const process = require('process')
 
 exports.handler = async function (event, context) {
