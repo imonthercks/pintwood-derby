@@ -22,7 +22,7 @@ exports.handler = async function (event, context) {
     // Prepare the data and headers
     const headers = Object.keys(formData); // Use form field names as headers
     console.log(`headers: ${JSON.stringify(headers)}`);
-    const values = [headers.map((header) => formData[header])];
+    const values = headers.map((header) => formData[header]);
     console.log(`values: ${JSON.stringify(values)}`);
     
     // Call the Sheets API to append the data
@@ -31,7 +31,7 @@ exports.handler = async function (event, context) {
       range: `${sheetName}!A:A`, // Specify the range for the headers (e.g., column A)
       valueInputOption: 'RAW',
       resource: {
-        values: [headers],
+        values: headers,
       },
     });
 
