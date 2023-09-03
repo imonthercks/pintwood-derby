@@ -13,7 +13,7 @@ exports.handler = async function (event, context) {
     const doc = new GoogleSpreadsheet(process.env.GOOGLE_SHEETS_DOCUMENT_ID);
     await doc.useServiceAccountAuth({
       client_email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
-      private_key: process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, "\n")
+      private_key: process.env.GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY.replace(/\\n/g, "\n")
     });
     //const sheets = google.sheets({ version: 'v4', auth: GOOGLE_SERVICE_KEY_JSON });
 
