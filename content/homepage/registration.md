@@ -52,10 +52,10 @@ header_menu: true
     <input type="text" id="name" name="name" required><br><br>
 
     <label for="numRacers">Number of Racers:</label>
-    <input type="number" id="numRacers" name="numRacers" min="1" max="5" required><br><br>
+    <input type="number" id="numRacers" name="numRacers" min="0" max="5" value="1" required><br><br>
 
     <label for="numSpectators">Number of Spectators:</label>
-    <input type="number" id="numSpectators" name="numSpectators" min="0" required><br><br>
+    <input type="number" id="numSpectators" name="numSpectators" min="0" value="0" required><br><br>
 
     <label for="email">Email:</label>
     <input type="email" id="email" name="email" required><br><br>
