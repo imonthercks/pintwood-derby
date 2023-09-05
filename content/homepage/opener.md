@@ -3,7 +3,7 @@ title: "Welcome"
 weight: 1
 ---
 
-#### Welcome to the Annual Adult Pinewood Derby Extravaganza!
+#### Welcome to the First Annual SEAS Pintwood Derby!
 
 Get ready for a thrilling evening of speed, competition, and camaraderie at our one-of-a-kind Pinewood Derby event tailored exclusively for adults. Whether you're a seasoned racer or a first-time participant, this promises to be an unforgettable night filled with food, drinks, prizes, and plenty of fast-paced action.
 
@@ -19,7 +19,7 @@ Remember the excitement of crafting your own Pinewood Derby car as a child? Now 
 
 **Racing Thrills:** Experience the thrill of racing your custom-designed Pinewood Derby car down the track. Will you have the fastest car of the night?
 
-**Food & Drinks:** Enjoy a delectable spread of gourmet food and a variety of drinks to keep your energy up and your spirits high throughout the event.
+**Food & Drinks:** Enjoy a delectable spread from one of Wichita's finest and a variety of drinks to keep your energy up and your spirits high throughout the event.
 
 **Prizes Galore:** Compete for a chance to win fantastic prizes and trophies. We've got awards for speed, creativity, and style, so put your best wheel forward!
 
@@ -29,18 +29,14 @@ Remember the excitement of crafting your own Pinewood Derby car as a child? Now 
 
 #### How to Participate:
 
-**Register:** Secure your spot in the derby by registering online or at the event. Limited spots available, so don't wait!
+**Register:** Secure your spot in the derby by [registering online](#registration) or by [contacting one of the race organizers](#contact). Limited spots available, so don't wait!
+
+**Pick up your Car Kit:** We'll email you with dates and times to come pickup your kit and pay your registration with plenty of time to get to work on your car.
 
 **Build Your Dream Car:** Let your creativity run wild as you design and build your Pinewood Derby car. Remember, there are prizes for the most creative designs.
 
-**Race Day:** Bring your car to the event and get ready for some adrenaline-pumping races.
+**Race Day:** Bring your car to check-in between 3PM and 5PM on race day and then get ready for the main event starting at 7PM.
 
-**Celebrate:** Win or lose, join us for the awards ceremony, delicious food, drinks, and a night of celebration.
-
-#### Bring your competitive spirit and your appetite!
-
-Mark your calendar and get ready for an unforgettable evening of friendly competition, delicious food, and great company at the Annual Adult Pinewood Derby Extravaganza. Whether you're a veteran racer or a rookie, this event is all about having fun and reliving those cherished childhood memories.
-
-Don't miss out on the racing action, the prizes, and the camaraderie. Reserve your spot today and let's make this Pinewood Derby the best one yet!
+**Celebrate:** Win or lose, join us for the awards ceremony, delicious food, drinks, and the great feeling of knowing you're supporting a great cause!
 
 [Register Now](#registration)

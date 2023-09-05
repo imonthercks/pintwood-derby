@@ -6,4 +6,12 @@ weight: 2
 header_menu: true
 ---
 
+#### Event Rules
+**Stock Class:** Coming soon...
+
+**Outlaw Class:** Coming soon...
+
+#### What does this event support?
 Coming soon...
+
+

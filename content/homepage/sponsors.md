@@ -11,14 +11,15 @@ header_menu: true
         /* Define the grid container */
         .sponsor-grid-burnout {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(500px, 1fr)); /* Responsive grid with a minimum column width of 250px */
+            grid-template-columns: repeat(auto-fill, 
+            minmax(100%, 1fr)); /* Responsive grid with a minimum column width of 250px */
             grid-gap: 20px; /* Gap between grid items */
             padding: 20px;
         }
 
         .sponsor-grid-other {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* Responsive grid with a minimum column width of 250px */
+            grid-template-columns: repeat(auto-fill, minmax(100px, 320px)); /* Responsive grid with a minimum column width of 100px */
             grid-gap: 20px; /* Gap between grid items */
             padding: 20px;
         }
