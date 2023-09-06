@@ -8,7 +8,9 @@ weight: 1
 Get ready for a thrilling evening of speed, competition, and camaraderie at our one-of-a-kind Pinewood Derby event tailored exclusively for adults. Whether you're a seasoned racer or a first-time participant, this promises to be an unforgettable night filled with food, drinks, prizes, and plenty of fast-paced action.
 
 **Date:** June 9, 2023
+
 **Time:** 7PM - 10PM
+
 **Location:** St. Elizabeth Ann Seton Church - Mother Seton Hall
 
 #### Why should kids have all the fun?

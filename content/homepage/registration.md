@@ -8,7 +8,7 @@ header_menu: true
 
 {{< rawhtml >}}
 <style>
-    /* Responsive styles for the form 
+    /* Responsive styles for the form */
     form {
         max-width: 400px;
         margin: 0 auto;
@@ -16,7 +16,7 @@ header_menu: true
 
     label {
         display: block;
-        margin-bottom: 10px;
+        margin-bottom: 5px;
     }
 
     input[type="text"],
@@ -26,15 +26,23 @@ header_menu: true
     select {
         width: 100%;
         padding: 10px;
-        margin-bottom: 20px;
+        margin-bottom: 15px;
         border: 1px solid #ccc;
         border-radius: 5px;
         font-size: 16px;
     }
 
+    input[type="number"] {
+        max-width:100px;
+    }
+    
+    input[type="tel"] {
+        max-width:200px;
+    }
+    
     p {
         font-weight: bold;
-        margin-top: 20px;
+        margin-top: 5px;
     }
 
     button {
@@ -45,26 +53,27 @@ header_menu: true
         border-radius: 5px;
         font-size: 18px;
         cursor: pointer;
-    } */
+    } 
 </style>
 <form data-netlify="true" netlify-honeypot method="POST" name="registration">
     <label for="name">Name:</label>
-    <input type="text" id="name" name="name" required><br><br>
+    <input type="text" id="name" name="name" required><br>
 
     <label for="numRacers">Number of Racers:</label>
-    <input type="number" id="numRacers" name="numRacers" min="0" max="5" value="1" required><br><br>
+    <input type="number" id="numRacers" name="numRacers" min="0" max="5" value="1" required><br>
 
     <label for="numSpectators">Number of Spectators:</label>
-    <input type="number" id="numSpectators" name="numSpectators" min="0" value="0" required><br><br>
+    <input type="number" id="numSpectators" name="numSpectators" min="0" value="0" required><br>
 
     <label for="email">Email:</label>
-    <input type="email" id="email" name="email" required><br><br>
+    <input type="email" id="email" name="email" required><br>
 
     <label for="phone">Phone:</label>
-    <input type="tel" id="phone" name="phone" pattern="[0-9]{11}" required><br><br>
+    <input type="tel" id="phone" name="phone" pattern="[0-9]{11}" required><br>
 
-    <p>Select the category of car for each racer:</p>
     <div id="carCategories">
+        <p>Select the category of car for each racer:</p>
+        
         <!-- JavaScript will dynamically add car category fields based on the number of racers -->
         <div id="car1CategoryFields" style="display: none;">
         <label for="car1Category">Car #1:</label>
@@ -144,15 +153,26 @@ header_menu: true
         const numRacersInput = document.getElementById("numRacers");
         const carCategoriesDiv = document.getElementById("carCategories");
 
-        numRacersInput.addEventListener("input", () => {
-            if (numRacersInput.value.trim() === "") retnrn;
+        const refreshCarCategories = () => {
+            const carCategoriesDiv = document.getElementById("carCategories");
+            if (numRacersInput.value.trim() === ""){
+                carCategoriesDiv.style.display = "none";
+                return;
+            } 
+            
+            carCategoriesDiv.style.display = "block";
             const numRacers = Math.floor(numRacersInput.value, 5);
 
             for (let i = 1; i <= 5; i++) {
                 const fieldName = 'car' + i + 'CategoryFields';
                 const carCategoryFields = document.getElementById(fieldName);
                 carCategoryFields.style.display = (i <= numRacers) ? "block" : "none";
-            }
-        });
+            };
+            };
+        numRacersInput.addEventListener("input", 
+        refreshCarCategories);
+
+        refreshCarCategories();
+
     </script>
 {{< /rawhtml >}}
