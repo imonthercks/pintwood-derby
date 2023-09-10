@@ -79,14 +79,8 @@ exports.handler = async function (event, context) {
       text: 'test',
       html: '<strong>test</strong>',
     }
-    sgMail
-      .send(msg)
-      .then(() => {
-        console.log('Email sent')
-      })
-      .catch((error) => {
-        console.error(error)
-      })
+    await sgMail.send(msg)
+    console.log('Email sent')
 
     return {
       statusCode: 200,
