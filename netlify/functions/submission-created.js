@@ -74,7 +74,7 @@ exports.handler = async function (event, context) {
     //sends a request to an email handler for a subscribed email
     await fetch(`${process.env.URL}/.netlify/functions/emails/subscribed`, {
       headers: {
-        "netlify-emails-secret": ETLIFY_EMAILS_SECRET,
+        "netlify-emails-secret": NETLIFY_EMAILS_SECRET,
       },
       method: "POST",
       body: JSON.stringify({
