@@ -78,6 +78,7 @@ header_menu: true
         <div id="car1CategoryFields" style="display: none;">
         <label for="car1Category">Car #1:</label>
         <select id="car1Category" name="car1Category">
+            <option value="">-- Select one --</option>
             <option value="stock">Stock</option>
             <option value="outlaw">Outlaw</option>
         </select><br>
@@ -85,6 +86,7 @@ header_menu: true
         <div id="car2CategoryFields" style="display: none;">
         <label for="car2Category">Car #2:</label>
         <select id="car2Category" name="car2Category">
+            <option value="">-- Select one --</option>
             <option value="stock">Stock</option>
             <option value="outlaw">Outlaw</option>
         </select><br>
@@ -92,6 +94,7 @@ header_menu: true
         <div id="car3CategoryFields" style="display: none;">
         <label for="car3Category">Car #3:</label>
         <select id="car3Category" name="car3Category">
+            <option value="">-- Select one --</option>
             <option value="stock">Stock</option>
             <option value="outlaw">Outlaw</option>
         </select><br>
@@ -99,6 +102,7 @@ header_menu: true
         <div id="car4CategoryFields" style="display: none;">
         <label for="car4Category">Car #4:</label>
         <select id="car4Category" name="car4Category">
+            <option value="">-- Select one --</option>
             <option value="stock">Stock</option>
             <option value="outlaw">Outlaw</option>
         </select><br>
@@ -106,6 +110,7 @@ header_menu: true
         <div id="car5CategoryFields" style="display: none;">
         <label for="car5Category">Car #5:</label>
         <select id="car5Category" name="car5Category">
+            <option value="">-- Select one --</option>
             <option value="stock">Stock</option>
             <option value="outlaw">Outlaw</option>
         </select><br>
