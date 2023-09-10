@@ -5,11 +5,13 @@ weight: 1
 
 #### Welcome to the First Annual SEAS Pintwood Derby!
 
-Get ready for a thrilling evening of speed, competition, and camaraderie at our one-of-a-kind Pinewood Derby event tailored exclusively for adults. Whether you're a seasoned racer or a first-time participant, this promises to be an unforgettable night filled with food, drinks, prizes, and plenty of fast-paced action.
+Get ready for a thrilling evening of speed, competition, and camaraderie at our one-of-a-kind Adult Pinewood Derby event. Whether you're a seasoned racer or a first-time participant, this promises to be an unforgettable night filled with food, drinks, prizes, and plenty of fast-paced action.
 
-**Date:** June 9, 2023
+**Date:** December 9, 2023
 
-**Time:** 7PM - 10PM
+**Check-in:** 3PM – 5PM
+
+**Race Time:** 7PM - 10PM
 
 **Location:** St. Elizabeth Ann Seton Church - Mother Seton Hall
 
@@ -27,15 +29,15 @@ Remember the excitement of crafting your own Pinewood Derby car as a child? Now 
 
 **Friendly Competition:** Connect with fellow racers and make new friends in a fun and competitive atmosphere. Swap racing stories and create lasting memories.
 
-**Crafting Station:** Need some last-minute tweaks to your car? We've got a crafting station with all the tools you'll need to fine-tune your racer.
+**Repair Station:** Need some last-minute tweaks to your car? We've got a station with all the tools you'll need to fine-tune your car.
 
 #### How to Participate:
 
-**Register:** Secure your spot in the derby by [registering online](#registration) or by [contacting one of the race organizers](#contact). Limited spots available, so don't wait!
+**Register:** Secure your spot in the derby by [registering online](#registration) or by [contacting one of the race organizers](#contact). Limited spots are available, so don't wait!
 
-**Pick up your Car Kit:** We'll email you with dates and times to come pickup your kit and pay your registration with plenty of time to get to work on your car.
+**Pick up your Car Kit:** We'll email you with the date and time to come pickup your kit and pay your registration fees with plenty of time to get to work on your car.
 
-**Build Your Dream Car:** Let your creativity run wild as you design and build your Pinewood Derby car. Remember, there are prizes for the most creative designs.
+**Build Your Dream Car:** Let your creativity run wild as you design and build your Pinewood Derby car to compete in the Stock or Outlaw Class. Remember, there are also prizes for the most creative designs.
 
 **Race Day:** Bring your car to check-in between 3PM and 5PM on race day and then get ready for the main event starting at 7PM.
 

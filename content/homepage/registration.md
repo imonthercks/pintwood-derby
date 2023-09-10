@@ -55,7 +55,7 @@ header_menu: true
         cursor: pointer;
     } 
 </style>
-<form data-netlify="true" netlify-honeypot method="POST" name="registration">
+<form data-netlify="true" netlify-honeypot method="POST" action="/registration-thankyou" name="registration">
     <label for="name">Name:</label>
     <input type="text" id="name" name="name" required><br>
 
@@ -68,9 +68,9 @@ header_menu: true
     <label for="email">Email:</label>
     <input type="email" id="email" name="email" required><br>
 
-    <label for="phone">Phone:</label>
-    <input type="tel" id="phone" name="phone" pattern="[0-9]{11}" required><br>
-
+    <label for="phone">Phone (with area code):</label>
+    <input type="tel" id="phone" name="phone" pattern="1?[0-9]{10}" required><br>
+   
     <div id="carCategories">
         <p>Select the category of car for each racer:</p>
         
@@ -169,6 +169,7 @@ header_menu: true
                 carCategoryFields.style.display = (i <= numRacers) ? "block" : "none";
             };
             };
+
         numRacersInput.addEventListener("input", 
         refreshCarCategories);
 

@@ -12,6 +12,6 @@ header_menu: true
 **Outlaw Class:** Coming soon...
 
 #### What does this event support?
-Coming soon...
+All proceeds from the SEAS Pintwood Derby goes to support Troop and Pack 726.
 
 
