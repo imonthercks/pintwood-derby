@@ -3,12 +3,14 @@
 //const { google } = require('googleapis');
 const { GoogleSpreadsheet } = require('google-spreadsheet');
 const { JWT } = require('google-auth-library');
+const sgMail = require('@sendgrid/mail')
+
 const process = require('process')
 
 exports.handler = async function (event, context) {
   try {
     // Load environment variables
-    const { REGISTRATION_SPREADSHEET_ID, REGISTRATION_SHEET_NAME, GOOGLE_SERVICE_ACCOUNT_EMAIL, GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY } = process.env;
+    const { REGISTRATION_SPREADSHEET_ID, REGISTRATION_SHEET_NAME, GOOGLE_SERVICE_ACCOUNT_EMAIL, GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY, SENDGRID_API_KEY } = process.env;
 
 
 
@@ -38,6 +40,7 @@ exports.handler = async function (event, context) {
     // Prepare the data and headers
     const headers = Object.keys(formData); // Use form field names as headers
     console.log(`headers: ${JSON.stringify(headers)}`);
+    const email = formData['email'];
     const values = headers.map((header) => formData[header]);
     console.log(`values: ${JSON.stringify(values)}`);
 
@@ -54,7 +57,7 @@ exports.handler = async function (event, context) {
     // console.log('header write complete.');
 
     await doc.loadInfo();
-    const sheet = doc.sheetsByTitle[REGISTRATION_SHEET_NAME] ?? await doc.addSheet({title: REGISTRATION_SHEET_NAME, headerValues: headers});
+    const sheet = doc.sheetsByTitle[REGISTRATION_SHEET_NAME] ?? await doc.addSheet({ title: REGISTRATION_SHEET_NAME, headerValues: headers });
     console.log('writing data...');
     // Append the actual data below the headers
     await sheet.addRow(formData);
@@ -67,6 +70,23 @@ exports.handler = async function (event, context) {
     //   },
     // });
     console.log('data write complete.');
+
+    sgMail.setApiKey(SENDGRID_API_KEY)
+    const msg = {
+      to: email, // Change to your recipient
+      from: 'no-reply@thepintwood.com', // Change to your verified sender
+      subject: 'You Pintwood Registration',
+      text: 'test',
+      html: '<strong>test</strong>',
+    }
+    sgMail
+      .send(msg)
+      .then(() => {
+        console.log('Email sent')
+      })
+      .catch((error) => {
+        console.error(error)
+      })
 
     return {
       statusCode: 200,
