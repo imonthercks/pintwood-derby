@@ -3,14 +3,12 @@
 //const { google } = require('googleapis');
 const { GoogleSpreadsheet } = require('google-spreadsheet');
 const { JWT } = require('google-auth-library');
-const sgMail = require('@sendgrid/mail')
-
 const process = require('process')
 
 exports.handler = async function (event, context) {
   try {
     // Load environment variables
-    const { REGISTRATION_SPREADSHEET_ID, REGISTRATION_SHEET_NAME, GOOGLE_SERVICE_ACCOUNT_EMAIL, GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY, SENDGRID_API_KEY } = process.env;
+    const { REGISTRATION_SPREADSHEET_ID, REGISTRATION_SHEET_NAME, GOOGLE_SERVICE_ACCOUNT_EMAIL, GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY, NETLIFY_EMAILS_SECRET } = process.env;
 
 
 
@@ -41,6 +39,7 @@ exports.handler = async function (event, context) {
     const headers = Object.keys(formData); // Use form field names as headers
     console.log(`headers: ${JSON.stringify(headers)}`);
     const email = formData['email'];
+    const name = formData['name'];
     const values = headers.map((header) => formData[header]);
     console.log(`values: ${JSON.stringify(values)}`);
 
@@ -71,20 +70,23 @@ exports.handler = async function (event, context) {
     // });
     console.log('data write complete.');
 
-    sgMail.setApiKey(SENDGRID_API_KEY)
-    const msg = {
-      to: email, // Change to your recipient
-      from: 'no-reply@thepintwood.com', // Change to your verified sender
-      subject: 'You Pintwood Registration',
-      text: 'test',
-      html: '<strong>test</strong>',
-    }
-    try {
-    await sgMail.send(msg)
-    } catch (error) {
-      console.log(error);
-      console.log(error.response.body);
-    }
+    //automatically generated snippet from the email preview
+    //sends a request to an email handler for a subscribed email
+    await fetch(`${process.env.URL}/.netlify/functions/emails/subscribed`, {
+      headers: {
+        "netlify-emails-secret": ETLIFY_EMAILS_SECRET,
+      },
+      method: "POST",
+      body: JSON.stringify({
+        from: 'no-reply@thepintwood.com',
+        to: email,
+        subject: "You've been subscribed",
+        parameters: {
+          name: name,
+          email: 'kgittemeier@gmail.com',
+        },
+      }),
+    });
     console.log('Email sent')
 
     return {
