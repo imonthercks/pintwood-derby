@@ -79,7 +79,12 @@ exports.handler = async function (event, context) {
       text: 'test',
       html: '<strong>test</strong>',
     }
+    try {
     await sgMail.send(msg)
+    } catch (error) {
+      console.log(error);
+      console.log(error.body);
+    }
     console.log('Email sent')
 
     return {
