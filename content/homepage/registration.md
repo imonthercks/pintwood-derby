@@ -54,8 +54,15 @@ header_menu: true
         font-size: 18px;
         cursor: pointer;
     } 
+
+    /* Style for error message */
+        .error-message {
+            color: red;
+            font-size: 14px;
+            margin-top: 5px;
+        }
 </style>
-<form data-netlify="true" netlify-honeypot method="POST" action="/registration-thankyou" name="registration">
+<form data-netlify="true" netlify-honeypot method="POST" action="/registration-thankyou" name="registration" id="registration_form">
     <label for="name">Name:</label>
     <input type="text" id="name" name="name" required><br>
 
@@ -139,6 +146,7 @@ header_menu: true
         </select><br><br>
     </div>
 
+    <span class="error-message" id="errorMessage"></span>
     <button type="submit">Submit</button>
 </form>
 <script>
@@ -175,9 +183,39 @@ header_menu: true
             };
             };
 
-        numRacersInput.addEventListener("input", 
-        refreshCarCategories);
+        const validate = () => {
+            let success = true;
+            let messageText = "";
+            const numRacers = Math.floor(numRacersInput.value, 5);
+            for (let i = 1; i <= numRacers; i++) {
+                const fieldName = 'car' + i + 'Category';
+                const carCategoryField = document.getElementById(fieldName);
 
+                if (carCategoryField.value === "") {
+                    carCategoryField.style.borderColor = "red"; // Highlight the input field in red
+                    carCategoryField.focus();
+                    messageText = "Please select a category for each car.";
+                    success = false;
+                } else {
+                    carCategoryField.style.borderColor = ""; // Remove the red border
+                    messageText = "";
+                }
+
+                const errorMessage = document.getElementById('errorMessage');
+                errorMessage.textContent = messageText;
+                errorMessage.style.display = success ? "none" : "block";
+
+                return success;
+            }
+        }
+
+        numRacersInput.addEventListener("input", refreshCarCategories);
+        const emailForm = document.getElementById("registration_form");
+        emailForm.addEventListener("submit", function (event) {
+            if (!validate()) {
+                event.preventDefault(); // Prevent form submission if email is invalid
+            }
+        });
         refreshCarCategories();
 
     </script>
