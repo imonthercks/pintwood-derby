@@ -40,6 +40,16 @@ exports.handler = async function (event, context) {
     console.log(`headers: ${JSON.stringify(headers)}`);
     const email = formData['email'];
     const name = formData['name'];
+    const phone = formData['phone'];
+    let stock_cars = 0
+    let outlaw_cars = 0
+
+    if (formData['car1Category'] === "stock") {stock_cars++} else outlaw_cars++;
+    if (formData['car2Category'] === "stock") {stock_cars++} else outlaw_cars++;
+    if (formData['car3Category'] === "stock") {stock_cars++} else outlaw_cars++;
+    if (formData['car4Category'] === "stock") {stock_cars++} else outlaw_cars++;
+    if (formData['car5Category'] === "stock") {stock_cars++} else outlaw_cars++;
+
     const values = headers.map((header) => formData[header]);
     console.log(`values: ${JSON.stringify(values)}`);
 
@@ -80,10 +90,13 @@ exports.handler = async function (event, context) {
       body: JSON.stringify({
         from: 'no-reply@thepintwood.com',
         to: email,
-        subject: "You've been subscribed",
+        subject: "Your Pintwood Derby Registration",
         parameters: {
-          name: name,
-          email: 'kgittemeier@gmail.com',
+          name,
+          email,
+          phone,
+          stock_cars,
+          outlaw_cars
         },
       }),
     });
