@@ -147,7 +147,7 @@ header_menu: true
     </div>
 
     <span class="error-message" id="errorMessage"></span>
-    <button type="submit">Submit</button>
+    <button id="submitButton" type="submit">Submit</button>
 </form>
 <script>
         // JavaScript to show/hide sponsorship fields based on checkbox
@@ -212,8 +212,15 @@ header_menu: true
         numRacersInput.addEventListener("input", refreshCarCategories);
         const emailForm = document.getElementById("registration_form");
         emailForm.addEventListener("submit", function (event) {
+            // Disable the submit button on first click
+            const submitButton = document.getElementById('submitButton');
+            submitButton.setAttribute("disabled", "true");
             if (!validate()) {
                 event.preventDefault(); // Prevent form submission if email is invalid
+            
+                setTimeout(function () {
+                    submitButton.removeAttribute("disabled");
+                }, 1000); 
             }
         });
         refreshCarCategories();
