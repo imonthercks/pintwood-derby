@@ -41,8 +41,7 @@ header_menu: true
     }
     
     p {
-        font-weight: bold;
-        margin-top: 5px;
+         margin-top: 5px;
     }
 
     button {
