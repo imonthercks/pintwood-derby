@@ -39,6 +39,9 @@ exports.handler = async function (event, context) {
     const email = formData['email'];
     const name = formData['name'];
     const phone = formData['phone'];
+    const sponsorName = formData['sponsorName'];
+    const sponsorLevel = formData['sponsorLevel'];
+
     let stock_cars = 0
     let outlaw_cars = 0
 
@@ -98,7 +101,9 @@ exports.handler = async function (event, context) {
           email,
           phone,
           stock_cars,
-          outlaw_cars
+          outlaw_cars,
+          sponsorName,
+          sponsorLevel
         },
       }),
     });
