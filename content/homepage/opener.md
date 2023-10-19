@@ -5,7 +5,7 @@ weight: 1
 
 #### Welcome to the First Annual SEAS Pintwood Derby!
 
-Get ready for a thrilling evening of speed, competition, and camaraderie at our one-of-a-kind Adult Pinewood Derby event. Whether you're a seasoned racer or a first-time participant, this promises to be an unforgettable night filled with food, drinks, prizes, and plenty of fast-paced action.
+Get ready for a thrilling evening of speed, competition, and camaraderie at our one-of-a-kind Adult Pinewood Derby event. Whether you're a seasoned racer or a first-time participant, this promises to be an unforgettable night filled with food, prizes, and plenty of fast-paced action.
 
 **Date:** December 9, 2023
 
@@ -23,7 +23,7 @@ Remember the excitement of crafting your own Pinewood Derby car as a child? Now 
 
 **Racing Thrills:** Experience the thrill of racing your custom-designed Pinewood Derby car down the track. Will you have the fastest car of the night?
 
-**Food & Drinks:** Enjoy a delectable spread from one of Wichita's finest and a variety of drinks to keep your energy up and your spirits high throughout the event.
+**Dining:** Enjoy a delectable spread from one of Wichita's finest to keep your energy up and your spirits high throughout the event.
 
 **Prizes Galore:** Compete for a chance to win fantastic prizes and trophies. We've got awards for speed, creativity, and style, so put your best wheel forward!
 
@@ -41,6 +41,6 @@ Remember the excitement of crafting your own Pinewood Derby car as a child? Now 
 
 **Race Day:** Bring your car to check-in between 3PM and 5PM on race day and then get ready for the main event starting at 7PM.
 
-**Celebrate:** Win or lose, join us for the awards ceremony, delicious food, drinks, and the great feeling of knowing you're supporting a great cause!
+**Celebrate:** Win or lose, join us for the awards ceremony, delicious food and the great feeling of knowing you're supporting a great cause!
 
 [Register Now](#registration)
