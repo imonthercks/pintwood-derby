@@ -122,6 +122,8 @@ header_menu: true
             let success = true;
             let messageText = "";
             const numRacers = Math.floor(numRacersInput.value, 5);
+
+            return success;
         }
 
         const emailForm = document.getElementById("registration_form");
