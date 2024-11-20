@@ -1,17 +1,23 @@
 ---
 title: "Welcome"
+header_menu_title: "Welcome"
+navigation_menu_title: "Welcome"
+weight: 1
+header_menu: true
 weight: 1
 ---
 
 #### Welcome to the First Annual SEAS Pintwood Derby!
 
-Get ready for a thrilling evening of speed, competition, and camaraderie at our one-of-a-kind Adult Pinewood Derby event. Whether you're a seasoned racer or a first-time participant, this promises to be an unforgettable night filled with food, prizes, and plenty of fast-paced action.
+ Join us for a night of high speed competition, food, and fun.  Build a car and compete compete for CASH prizes and bragging rights! Don’t want to build a car? For $5 take a your chances with a mystery Cub Car (while supplies last)
 
-**Date:** December 9, 2023
+**Date:** February 8th 2025
 
 **Check-in:** 3PM – 5PM
 
-**Race Time:** 7PM - 10PM
+**Race Time:** 7PM - 9PM
+
+**Grudge Matches:** 9PM - 10PM ($10 per race)
 
 **Location:** St. Elizabeth Ann Seton Church - Mother Seton Hall
 
@@ -25,7 +31,7 @@ Remember the excitement of crafting your own Pinewood Derby car as a child? Now 
 
 **Dining:** Enjoy a delectable spread from one of Wichita's finest to keep your energy up and your spirits high throughout the event.
 
-**Prizes Galore:** Compete for a chance to win fantastic prizes and trophies. We've got awards for speed, creativity, and style, so put your best wheel forward!
+**Prizes Galore:** Compete for a chance to win fantastic prizes and trophies. We've got awards for Best Design, Best Paint Job, and Most Original, so put your best wheel forward!
 
 **Friendly Competition:** Connect with fellow racers and make new friends in a fun and competitive atmosphere. Swap racing stories and create lasting memories.
 

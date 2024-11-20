@@ -77,52 +77,6 @@ header_menu: true
     <label for="phone">Phone (with area code):</label>
     <input type="tel" id="phone" name="phone" pattern="1?[0-9]{10}" required><br>
    
-    <div id="carCategories">
-        <p>Select the category of car for each racer:</p>
-        
-        <!-- JavaScript will dynamically add car category fields based on the number of racers -->
-        <div id="car1CategoryFields" style="display: none;">
-        <label for="car1Category">Car #1:</label>
-        <select id="car1Category" name="car1Category">
-            <option value="">-- Select one --</option>
-            <option value="stock">Stock</option>
-            <option value="outlaw">Outlaw</option>
-        </select><br>
-        </div>
-        <div id="car2CategoryFields" style="display: none;">
-        <label for="car2Category">Car #2:</label>
-        <select id="car2Category" name="car2Category">
-            <option value="">-- Select one --</option>
-            <option value="stock">Stock</option>
-            <option value="outlaw">Outlaw</option>
-        </select><br>
-        </div>
-        <div id="car3CategoryFields" style="display: none;">
-        <label for="car3Category">Car #3:</label>
-        <select id="car3Category" name="car3Category">
-            <option value="">-- Select one --</option>
-            <option value="stock">Stock</option>
-            <option value="outlaw">Outlaw</option>
-        </select><br>
-        </div>
-        <div id="car4CategoryFields" style="display: none;">
-        <label for="car4Category">Car #4:</label>
-        <select id="car4Category" name="car4Category">
-            <option value="">-- Select one --</option>
-            <option value="stock">Stock</option>
-            <option value="outlaw">Outlaw</option>
-        </select><br>
-        </div>
-        <div id="car5CategoryFields" style="display: none;">
-        <label for="car5Category">Car #5:</label>
-        <select id="car5Category" name="car5Category">
-            <option value="">-- Select one --</option>
-            <option value="stock">Stock</option>
-            <option value="outlaw">Outlaw</option>
-        </select><br>
-        </div>
-    </div>
-
     <label for="sponsorship">Would you like to be a sponsor?</label>
         <select id="sponsorship" name="sponsorship">
             <option selected value="no">No</option>
@@ -163,52 +117,13 @@ header_menu: true
 
         // JavaScript to dynamically add car category fields based on the number of racers
         const numRacersInput = document.getElementById("numRacers");
-        const carCategoriesDiv = document.getElementById("carCategories");
-
-        const refreshCarCategories = () => {
-            const carCategoriesDiv = document.getElementById("carCategories");
-            if (numRacersInput.value.trim() === ""){
-                carCategoriesDiv.style.display = "none";
-                return;
-            } 
-            
-            carCategoriesDiv.style.display = "block";
-            const numRacers = Math.floor(numRacersInput.value, 5);
-
-            for (let i = 1; i <= 5; i++) {
-                const fieldName = 'car' + i + 'CategoryFields';
-                const carCategoryFields = document.getElementById(fieldName);
-                carCategoryFields.style.display = (i <= numRacers) ? "block" : "none";
-            };
-            };
 
         const validate = () => {
             let success = true;
             let messageText = "";
             const numRacers = Math.floor(numRacersInput.value, 5);
-            for (let i = 1; i <= numRacers; i++) {
-                const fieldName = 'car' + i + 'Category';
-                const carCategoryField = document.getElementById(fieldName);
-
-                if (carCategoryField.value === "") {
-                    carCategoryField.style.borderColor = "red"; // Highlight the input field in red
-                    carCategoryField.focus();
-                    messageText = "Please select a category for each car.";
-                    success = false;
-                } else {
-                    carCategoryField.style.borderColor = ""; // Remove the red border
-                    messageText = "";
-                }
-
-                const errorMessage = document.getElementById('errorMessage');
-                errorMessage.textContent = messageText;
-                errorMessage.style.display = success ? "none" : "block";
-
-                return success;
-            }
         }
 
-        numRacersInput.addEventListener("input", refreshCarCategories);
         const emailForm = document.getElementById("registration_form");
         emailForm.addEventListener("submit", function (event) {
             // Disable the submit button on first click
@@ -222,7 +137,7 @@ header_menu: true
                 }, 1000); 
             }
         });
-        refreshCarCategories();
+
 
     </script>
 {{< /rawhtml >}}
