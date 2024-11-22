@@ -65,10 +65,10 @@ header_menu: true
     <label for="name">Name:</label>
     <input type="text" id="name" name="name" required><br>
 
-    <label for="numRacers">Number of Racers:</label>
+    <label for="numRacers">Number of Racers ($35 each):</label>
     <input type="number" id="numRacers" name="numRacers" min="0" max="5" value="1" required><br>
 
-    <label for="numSpectators">Number of Spectators:</label>
+    <label for="numSpectators">Number of Spectators ($25 each):</label>
     <input type="number" id="numSpectators" name="numSpectators" min="0" value="0" required><br>
 
     <label for="email">Email:</label>

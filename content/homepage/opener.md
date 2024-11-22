@@ -29,8 +29,6 @@ Remember the excitement of crafting your own Pinewood Derby car as a child? Now 
 
 **Racing Thrills:** Experience the thrill of racing your custom-designed Pinewood Derby car down the track. Will you have the fastest car of the night?
 
-**Dining:** Enjoy a delectable spread from one of Wichita's finest to keep your energy up and your spirits high throughout the event.
-
 **Prizes Galore:** Compete for a chance to win fantastic prizes and trophies. We've got awards for Best Design, Best Paint Job, and Most Original, so put your best wheel forward!
 
 **Friendly Competition:** Connect with fellow racers and make new friends in a fun and competitive atmosphere. Swap racing stories and create lasting memories.
