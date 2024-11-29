@@ -9,7 +9,7 @@ weight: 1
 
 #### Welcome to the First Annual SEAS Pintwood Derby!
 
- Join us for a night of high speed competition, food, and fun.  Build a car and compete compete for CASH prizes and bragging rights! Don’t want to build a car? For $5 take a your chances with a mystery Cub Car (while supplies last)
+ Join us for a night of high speed competition, food, and fun.  Build a car and compete compete for CASH prizes and bragging rights! Don’t want to build a car? For $10 take a your chances with a mystery Cub Car (while supplies last)
 
 **Date:** February 8th 2025
 
