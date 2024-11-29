@@ -63,35 +63,27 @@ header_menu: true
 </style>
 <form data-netlify="true" netlify-honeypot="honey" data-netlify-recaptcha="true" method="POST" action="/registration-thankyou" name="registration" id="registration_form">
     <label for="name">Name:</label>
-    <input type="text" id="name" name="name" required><br>
-
+    <input type="text" id="name" name="name" required="true"><br>
     <label for="numRacers">Number of Racers ($35 each):</label>
     <input type="number" id="numRacers" name="numRacers" min="0" max="5" value="1" required>&nbsp;&nbsp;&nbsp;
     <input type="checkbox" id="mysteryCubCars" name="mysteryCubCars"> Mystery Cub Car(s)!
-
     <label for="numSpectators">Number of Spectators ($25 each):</label>
     <input type="number" id="numSpectators" name="numSpectators" min="0" value="0" required><br>
-
     <label for="email">Email:</label>
     <input type="email" id="email" name="email" required><br>
-
     <label for="phone">Phone (with area code):</label>
     <input type="tel" id="phone" name="phone" pattern="1?[0-9]{10}" required><br>
-   
     <label for="comments">Comments on registration:</label>
     <textarea id="comments" name="comments" cols="30"></textarea>
-   
     <label for="sponsorship">Would you like to be a sponsor?</label>
         <select id="sponsorship" name="sponsorship">
             <option selected value="no">No</option>
             <option value="yes">Yes</option>
         </select><br><br>
-
     <div id="sponsorshipFields" style="display: none;">
        <label for="sponsorName">Sponsor Name:</label>
         <input type="text" id="sponsorName" name="sponsorName">
         <br><br>
-
         <label for="sponsorLevel">Select Sponsorship Level:</label>
         <select id="sponsorLevel" name="sponsorLevel">
             <option value="">-- Choose one --</option>
@@ -102,8 +94,8 @@ header_menu: true
             <option value="Burnout - $1500">Burnout - $1500</option>
         </select><br><br>
     </div>
-
     <span class="error-message" id="errorMessage"></span>
+    <div data-netlify-recaptcha="true"></div>
     <button id="submitButton" type="submit">Submit</button>
 </form>
 <script>
