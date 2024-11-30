@@ -61,6 +61,19 @@ header_menu: true
             margin-top: 5px;
         }
 </style>
+<script>
+        var onSubmit = function(token) {
+          console.log('success!');
+        };
+
+        var onloadCallback = function() {
+          grecaptcha.render('submitButton', {
+            'sitekey' : '6LcyNY4qAAAAAAgwhNpEJfb5Mr8kuMb_F2eo8ISt',
+            'callback' : onSubmit,
+            'isolated' : true
+          });
+        };
+    </script>
 <form data-netlify="true" netlify-honeypot="honey" data-netlify-recaptcha="true" method="POST" action="/registration-thankyou" name="registration" id="registration_form">
     <label for="name">Name:</label>
     <input type="text" id="name" name="name" required="true"><br>
@@ -95,9 +108,11 @@ header_menu: true
         </select><br><br>
     </div>
     <span class="error-message" id="errorMessage"></span>
-    <div data-netlify-recaptcha="true"></div>
     <button id="submitButton" type="submit">Submit</button>
 </form>
+<script src="https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit"
+        async defer>
+    </script>
 <script>
         // JavaScript to show/hide sponsorship fields based on checkbox
         const sponsorshipCheckbox = document.getElementById("sponsorship");
