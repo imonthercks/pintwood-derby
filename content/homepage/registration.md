@@ -64,6 +64,7 @@ header_menu: true
 <script>
         var onSubmit = function(token) {
           console.log('success!');
+          document.getElementById("registration_form").submit();
         };
 
         var onloadCallback = function() {
