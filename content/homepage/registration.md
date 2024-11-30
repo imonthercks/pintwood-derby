@@ -112,7 +112,7 @@ header_menu: true
         });
 
         // JavaScript to dynamically add car category fields based on the number of racers
-        const numRacersInput = document.getElementById("numRacers");
+        /* const numRacersInput = document.getElementById("numRacers");
         const recaptchaStatus = document.getElementById("g-recaptcha-response");
         const validate = () => {
             alert(recaptchaStatus.value);
@@ -135,7 +135,7 @@ header_menu: true
                     submitButton.removeAttribute("disabled");
                 }, 1000); 
             }
-        });
+        });*/
 
 
     </script>
