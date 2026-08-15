@@ -11,15 +11,15 @@ weight: 1
 
  Join us for a night of high speed competition, food, and fun.  Build a car and compete compete for CASH prizes and bragging rights! Don’t want to build a car? For $10 take a your chances with a mystery Cub Car (while supplies last)
 
-**Date:** February 8th 2025
+**Date:** Saturday, November 7th 2026
 
-**Check-in:** 3PM – 5PM
+**Check-in:** 6PM – 7PM
 
 **Race Time:** 7PM - 9PM
 
 **Grudge Matches:** 9PM - 10PM ($10 per race)
 
-**Location:** St. Elizabeth Ann Seton Church - Mother Seton Hall
+**Location:** Wingate by Wyndham Wichita Airport - 5500b W Kellogg Dr, Wichita, KS 67209
 
 #### Why should kids have all the fun?
 
@@ -43,7 +43,7 @@ Remember the excitement of crafting your own Pinewood Derby car as a child? Now 
 
 **Build Your Dream Car:** Let your creativity run wild as you design and build your Pinewood Derby car to compete in the Stock or Outlaw Class. Remember, there are also prizes for the most creative designs.
 
-**Race Day:** Bring your car to check-in between 3PM and 5PM on race day and then get ready for the main event starting at 7PM.
+**Race Day:** Bring your car to check-in at 6PM and then get ready for the main event starting at 7PM.
 
 **Celebrate:** Win or lose, join us for the awards ceremony, delicious food and the great feeling of knowing you're supporting a great cause!
 
