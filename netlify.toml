@@ -1,2 +1,5 @@
 [[plugins]]
   package = "@netlify/plugin-emails"
+
+[build.environment]
+  HUGO_VERSION = "0.128.0"
