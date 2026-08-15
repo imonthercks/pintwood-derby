@@ -10,6 +10,6 @@ header_use_video: false
 #
 # Headers are safeHTML, you can use HTML tags such as b,i,u,br
 header_headline: "SEAS Pintwood Derby"
-header_subheadline: "February 8th 2025"
+header_subheadline: "February 8th 2026"
 ---
   
