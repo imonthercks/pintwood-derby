@@ -144,7 +144,7 @@ header_menu: true
             // attach reCAPTCHA token
             data['g-recaptcha-response'] = grecaptcha.getResponse();
 
-            const apiEndpoint = {{ .Site.Params.apiEndpoint | jsonify }};
+            const apiEndpoint = {{< apiendpoint >}};
 
             try {
                 const res = await fetch(apiEndpoint, {

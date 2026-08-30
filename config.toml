@@ -51,7 +51,7 @@ title = "SEAS Pintwood Derby"
     # The sections of the home page alternate styling. Mark invert as true to swap the styling of the sections
     invertSectionColors = false
 
-    # API Gateway endpoint — override at build time via HUGO_PARAM_APIENDPOINT env var
+    # API Gateway endpoint — override at build time via HUGO_PARAMS_APIENDPOINT env var
     apiEndpoint = ""
 
     [params.meta]
