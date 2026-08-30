@@ -78,7 +78,7 @@ export class PintwoodStack extends cdk.Stack {
     const registrationFn = new lambda.NodejsFunction(this, 'RegistrationFn', {
       entry: path.join(__dirname, '../../lambda/submit-registration/index.ts'),
       handler: 'handler',
-      runtime: cdk.aws_lambda.Runtime.NODEJS_20_X,
+      runtime: cdk.aws_lambda.Runtime.NODEJS_24_X,
       timeout: cdk.Duration.seconds(30),
       projectRoot: path.join(__dirname, '../..'),
       depsLockFilePath: path.join(__dirname, '../../lambda/submit-registration/package.json'),
