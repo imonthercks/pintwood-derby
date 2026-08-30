@@ -1,0 +1,16 @@
+{
+  "name": "submit-registration",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "@aws-sdk/client-ssm": "^3.0.0",
+    "@sendgrid/mail": "^7.7.0",
+    "google-auth-library": "^9.0.0",
+    "google-spreadsheet": "^4.0.2",
+    "handlebars": "^4.7.8"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0"
+  }
+}

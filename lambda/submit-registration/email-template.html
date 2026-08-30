@@ -1,0 +1,36 @@
+<html>
+  <body
+    style="
+      font-family: 'Open Sans', 'Helvetica Neue', sans-serif;
+      margin: 0 auto;
+    "
+  >
+    <div
+      style="
+        background-color: white;
+        display: inline-block;
+      "
+    >
+      <h1>Your registration has been received.</h1>
+      <p>
+        Here are the details of your registration:<br><br>
+        Name: {{name}}<br>
+        Email: {{email}}<br>
+        Phone: {{phone}}<br>
+      </p>
+      {{#if sponsorLevel}}
+        <p>
+          Your sponsorship details:<br><br>
+          Sponsor Name: {{sponsorName}}<br>
+          Sponsorship Level: {{sponsorLevel}}<br>
+        </p>
+      {{/if}}
+      <p>
+        If you need to make changes to your registration, please contact our race organizer:<br><br>
+        Keith Gittemeier<br>
+        Email: kgittemeier@gmail.com<br>
+        Phone: (316) 209-4762<br>
+      </p>
+    </div>
+  </body>
+</html>
