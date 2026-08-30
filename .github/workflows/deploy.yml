@@ -53,7 +53,7 @@ jobs:
           # Production uses the real domain (set as a GitHub environment variable, not a secret).
           # Staging falls back to the CloudFront domain from the stack output.
           HUGO_BASEURL: ${{ vars.HUGO_BASEURL || format('https://{0}', steps.cf.outputs.cloudfront_domain) }}
-          HUGO_PARAM_APIENDPOINT: ${{ steps.cf.outputs.api_endpoint }}
+          HUGO_PARAMS_APIENDPOINT: ${{ steps.cf.outputs.api_endpoint }}
         run: hugo --minify
 
       - name: Sync to S3
