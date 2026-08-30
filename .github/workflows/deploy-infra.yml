@@ -1,0 +1,51 @@
+name: Deploy Infrastructure
+
+# Run manually when CDK stack changes are needed.
+# Must complete before deploy-site runs for the first time in an environment.
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: Target environment
+        required: true
+        default: production
+        type: choice
+        options: [staging, production]
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  deploy-infra:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: us-east-1
+
+      - name: Install CDK dependencies
+        run: npm ci
+        working-directory: infra
+
+      - name: CDK deploy
+        run: |
+          npx cdk deploy PintwoodStack-${{ inputs.environment }} \
+            --context stackEnv=${{ inputs.environment }} \
+            --require-approval never \
+            --outputs-file cdk-outputs.json
+        working-directory: infra
+
+      - name: Print stack outputs
+        run: |
+          echo "Stack outputs (use these to verify — values are stored in CloudFormation):"
+          cat infra/cdk-outputs.json
