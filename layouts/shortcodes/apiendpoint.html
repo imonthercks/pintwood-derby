@@ -1,4 +1,4 @@
-{{/* Renders Site.Params.apiEndpoint as a JSON-encoded JS literal.
-     Used inside content/homepage/registration.md's {{< rawhtml >}} block,
-     since rawhtml's .Inner is raw text and does not execute Go templates. */}}
-{{ .Site.Params.apiEndpoint | jsonify }}
+{{- /* Renders Site.Params.apiEndpoint as a JSON-encoded JS literal.
+      Used inside content/homepage/registration.md's {{< rawhtml >}} block,
+      since rawhtml's .Inner is raw text and does not execute Go templates. */ -}}
+{{- (.Site.Params.apiEndpoint | default "") | jsonify -}}
