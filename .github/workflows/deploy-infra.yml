@@ -21,17 +21,22 @@ jobs:
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           node-version: '24'
 
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@v6
         with:
           role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
           aws-region: us-east-1
+
+      - name: Install repo dependencies
+        # Provides esbuild (and other root deps) for CDK's Lambda bundling, which
+        # invokes esbuild with the repo root as its working directory.
+        run: npm ci
 
       - name: Install CDK dependencies
         run: npm ci
