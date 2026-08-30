@@ -130,7 +130,7 @@ export class PintwoodStack extends cdk.Stack {
     });
     new cdk.CfnOutput(this, 'ApiEndpoint', {
       value: httpApi.apiEndpoint + '/submit-registration',
-      description: 'API Gateway endpoint (use as HUGO_PARAM_APIENDPOINT)',
+      description: 'API Gateway endpoint (use as HUGO_PARAMS_APIENDPOINT)',
     });
     new cdk.CfnOutput(this, 'SiteBucketName', {
       value: siteBucket.bucketName,
