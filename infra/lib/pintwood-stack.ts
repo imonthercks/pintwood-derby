@@ -101,7 +101,7 @@ export class PintwoodStack extends cdk.Stack {
       runtime: cdk.aws_lambda.Runtime.NODEJS_24_X,
       timeout: cdk.Duration.seconds(30),
       projectRoot: path.join(__dirname, '../..'),
-      depsLockFilePath: path.join(__dirname, '../../lambda/submit-registration/package.json'),
+      depsLockFilePath: path.join(__dirname, '../../lambda/submit-registration/package-lock.json'),
       durableConfig: {
         executionTimeout: cdk.Duration.hours(1),
         retentionPeriod: cdk.Duration.days(30),
