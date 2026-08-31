@@ -142,11 +142,14 @@ header_menu: true
                         window.location.href = '/registration-thankyou';
                         return;
                     }
-                    if (res.status === 429 && attempt < maxRetries) {
-                        const base = 1000 * Math.pow(2, attempt); // 1s,2s,4s
-                        const jitter = Math.floor(Math.random() * 250);
-                        await new Promise(r => setTimeout(r, base + jitter));
-                        continue;
+                    if (res.status === 429) {
+                        if (attempt < maxRetries) {
+                            const base = 1000 * Math.pow(2, attempt); // 1s,2s,4s
+                            const jitter = Math.floor(Math.random() * 250);
+                            await new Promise(r => setTimeout(r, base + jitter));
+                            continue;
+                        }
+                        break;
                     }
                     const json = await res.json().catch(() => ({}));
                     errorMessage.textContent = json.error || 'Submission failed. Please try again.';
