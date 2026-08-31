@@ -100,7 +100,8 @@ export class PintwoodStack extends cdk.Stack {
 
     // ── SQS registration queue ───────────────────────────────────────────────
     const registrationQueue = new sqs.Queue(this, 'RegistrationQueue', {
-      visibilityTimeout: cdk.Duration.seconds(120),
+      // visibility timeout must cover max durable execution time
+      visibilityTimeout: cdk.Duration.minutes(14),
       retentionPeriod: cdk.Duration.days(1),
     });
 
@@ -127,7 +128,8 @@ export class PintwoodStack extends cdk.Stack {
       projectRoot: path.join(__dirname, '../..'),
       depsLockFilePath: path.join(__dirname, '../../lambda/submit-registration/package-lock.json'),
       durableConfig: {
-        executionTimeout: cdk.Duration.hours(1),
+        // SQS event source mappings cap at 15 minutes
+        executionTimeout: cdk.Duration.minutes(14),
         retentionPeriod: cdk.Duration.days(30),
       },
       environment: {
