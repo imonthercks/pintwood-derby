@@ -197,7 +197,7 @@ export class PintwoodStack extends cdk.Stack {
       format: JSON.stringify({
         requestId: '$context.requestId',
         ip: '$context.identity.sourceIp',
-        requestTime: '$context.time',
+        requestTime: '$context.requestTime',
         httpMethod: '$context.httpMethod',
         path: '$context.path',
         status: '$context.status',
