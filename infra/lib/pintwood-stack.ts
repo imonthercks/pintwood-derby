@@ -28,7 +28,7 @@ export class PintwoodStack extends cdk.Stack {
     const registrationsTable = new dynamodb.Table(this, 'RegistrationsTable', {
       partitionKey: { name: 'registrationId', type: dynamodb.AttributeType.STRING },
       billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
-      pointInTimeRecoverySpecification: { pointInTimeRecoveryEnabled: true },
+      pointInTimeRecovery: true,
       removalPolicy: cdk.RemovalPolicy.RETAIN,
     });
 
