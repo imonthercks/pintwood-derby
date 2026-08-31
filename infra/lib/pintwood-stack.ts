@@ -3,6 +3,11 @@ import * as s3 from 'aws-cdk-lib/aws-s3';
 import * as cloudfront from 'aws-cdk-lib/aws-cloudfront';
 import * as origins from 'aws-cdk-lib/aws-cloudfront-origins';
 import * as lambda from 'aws-cdk-lib/aws-lambda-nodejs';
+import * as lambdaBase from 'aws-cdk-lib/aws-lambda';
+import * as iam from 'aws-cdk-lib/aws-iam';
+import * as dynamodb from 'aws-cdk-lib/aws-dynamodb';
+import * as sns from 'aws-cdk-lib/aws-sns';
+import * as snsSubscriptions from 'aws-cdk-lib/aws-sns-subscriptions';
 import { HttpApi, HttpMethod, CorsHttpMethod } from 'aws-cdk-lib/aws-apigatewayv2';
 import { HttpLambdaIntegration } from 'aws-cdk-lib/aws-apigatewayv2-integrations';
 import * as ssm from 'aws-cdk-lib/aws-ssm';
@@ -18,6 +23,21 @@ export class PintwoodStack extends cdk.Stack {
     super(scope, id, props);
 
     const ssmPrefix = `/pintwood/${props.stackEnv}`;
+
+    // ── DynamoDB registrations table ─────────────────────────────────────────
+    const registrationsTable = new dynamodb.Table(this, 'RegistrationsTable', {
+      partitionKey: { name: 'registrationId', type: dynamodb.AttributeType.STRING },
+      billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
+      pointInTimeRecovery: true,
+      removalPolicy: cdk.RemovalPolicy.RETAIN,
+    });
+
+    // ── SNS notification topic ────────────────────────────────────────────────
+    const notificationTopic = new sns.Topic(this, 'RegistrationNotificationTopic', {
+      displayName: 'Pintwood Derby Registration Notifications',
+    });
+    notificationTopic.addSubscription(new snsSubscriptions.EmailSubscription('kgittemeier@gmail.com'));
+    notificationTopic.addSubscription(new snsSubscriptions.EmailSubscription('imonthercks@gmail.com'));
 
     // ── Static site bucket ───────────────────────────────────────────────────
     const siteBucket = new s3.Bucket(this, 'SiteBucket', {
@@ -74,21 +94,27 @@ export class PintwoodStack extends cdk.Stack {
       { parameterName: `${ssmPrefix}/RECAPTCHA_SECRET_KEY` },
     );
 
-    // ── Registration Lambda ───────────────────────────────────────────────────
+    // ── Registration Lambda (durable) ────────────────────────────────────────
     const registrationFn = new lambda.NodejsFunction(this, 'RegistrationFn', {
       entry: path.join(__dirname, '../../lambda/submit-registration/index.ts'),
       handler: 'handler',
       runtime: cdk.aws_lambda.Runtime.NODEJS_24_X,
       timeout: cdk.Duration.seconds(30),
       projectRoot: path.join(__dirname, '../..'),
-      depsLockFilePath: path.join(__dirname, '../../lambda/submit-registration/package.json'),
+      depsLockFilePath: path.join(__dirname, '../../lambda/submit-registration/package-lock.json'),
+      durableConfig: {
+        executionTimeout: cdk.Duration.hours(1),
+        retentionPeriod: cdk.Duration.days(30),
+      },
       environment: {
-        SSM_SPREADSHEET_ID: `${ssmPrefix}/REGISTRATION_SPREADSHEET_ID`,
-        SSM_SHEET_NAME:     `${ssmPrefix}/REGISTRATION_SHEET_NAME`,
-        SSM_SA_EMAIL:       `${ssmPrefix}/GOOGLE_SERVICE_ACCOUNT_EMAIL`,
-        SSM_SA_KEY:         `${ssmPrefix}/GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY`,
-        SSM_SENDGRID_KEY:   `${ssmPrefix}/SENDGRID_API_KEY`,
-        SSM_RECAPTCHA_SECRET: `${ssmPrefix}/RECAPTCHA_SECRET_KEY`,
+        SSM_SPREADSHEET_ID:        `${ssmPrefix}/REGISTRATION_SPREADSHEET_ID`,
+        SSM_SHEET_NAME:            `${ssmPrefix}/REGISTRATION_SHEET_NAME`,
+        SSM_SA_EMAIL:              `${ssmPrefix}/GOOGLE_SERVICE_ACCOUNT_EMAIL`,
+        SSM_SA_KEY:                `${ssmPrefix}/GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY`,
+        SSM_SENDGRID_KEY:          `${ssmPrefix}/SENDGRID_API_KEY`,
+        SSM_RECAPTCHA_SECRET:      `${ssmPrefix}/RECAPTCHA_SECRET_KEY`,
+        DYNAMODB_TABLE_NAME:       registrationsTable.tableName,
+        SNS_NOTIFICATION_TOPIC_ARN: notificationTopic.topicArn,
       },
       bundling: {
         externalModules: [],
@@ -103,10 +129,25 @@ export class PintwoodStack extends cdk.Stack {
       },
     });
 
+    // Required for durable execution checkpoint operations
+    registrationFn.role!.addManagedPolicy(
+      iam.ManagedPolicy.fromAwsManagedPolicyName('service-role/AWSLambdaBasicDurableExecutionRolePolicy'),
+    );
+
+    // Publish a version and create a prod alias (durable functions require qualified ARNs)
+    const registrationFnVersion = registrationFn.currentVersion;
+    const registrationFnAlias = new lambdaBase.Alias(this, 'RegistrationFnProdAlias', {
+      aliasName: 'prod',
+      version: registrationFnVersion,
+    });
+
     // Grant Lambda read access to each SSM SecureString
     for (const param of [spreadsheetId, sheetName, saEmail, saKey, sendgridKey, recaptchaSecret]) {
       param.grantRead(registrationFn);
     }
+
+    registrationsTable.grantWriteData(registrationFn);
+    notificationTopic.grantPublish(registrationFn);
 
     // ── API Gateway HTTP API ──────────────────────────────────────────────────
     const httpApi = new HttpApi(this, 'HttpApi', {
@@ -120,7 +161,7 @@ export class PintwoodStack extends cdk.Stack {
     httpApi.addRoutes({
       path: '/submit-registration',
       methods: [HttpMethod.POST],
-      integration: new HttpLambdaIntegration('RegistrationIntegration', registrationFn),
+      integration: new HttpLambdaIntegration('RegistrationIntegration', registrationFnAlias),
     });
 
     // ── Outputs ───────────────────────────────────────────────────────────────
