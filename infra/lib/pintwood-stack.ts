@@ -11,6 +11,8 @@ import * as snsSubscriptions from 'aws-cdk-lib/aws-sns-subscriptions';
 import { HttpApi, HttpMethod, CorsHttpMethod } from 'aws-cdk-lib/aws-apigatewayv2';
 import * as apigatewayv2 from 'aws-cdk-lib/aws-apigatewayv2';
 import { HttpLambdaIntegration } from 'aws-cdk-lib/aws-apigatewayv2-integrations';
+import * as sqs from 'aws-cdk-lib/aws-sqs';
+import { SqsEventSource } from 'aws-cdk-lib/aws-lambda-event-sources';
 import * as ssm from 'aws-cdk-lib/aws-ssm';
 import * as logs from 'aws-cdk-lib/aws-logs';
 import { Construct } from 'constructs';
@@ -96,7 +98,27 @@ export class PintwoodStack extends cdk.Stack {
       { parameterName: `${ssmPrefix}/RECAPTCHA_SECRET_KEY` },
     );
 
-    // ── Registration Lambda (durable) ────────────────────────────────────────
+    // ── SQS registration queue ───────────────────────────────────────────────
+    const registrationQueue = new sqs.Queue(this, 'RegistrationQueue', {
+      visibilityTimeout: cdk.Duration.seconds(120),
+      retentionPeriod: cdk.Duration.days(1),
+    });
+
+    // ── Accept Lambda — thin HTTP handler: validates honeypot, enqueues to SQS
+    const acceptRegistrationFn = new lambda.NodejsFunction(this, 'AcceptRegistrationFn', {
+      entry: path.join(__dirname, '../../lambda/accept-registration/index.ts'),
+      handler: 'handler',
+      runtime: cdk.aws_lambda.Runtime.NODEJS_24_X,
+      timeout: cdk.Duration.seconds(10),
+      projectRoot: path.join(__dirname, '../..'),
+      depsLockFilePath: path.join(__dirname, '../../lambda/accept-registration/package-lock.json'),
+      environment: {
+        REGISTRATION_QUEUE_URL: registrationQueue.queueUrl,
+      },
+    });
+    registrationQueue.grantSendMessages(acceptRegistrationFn);
+
+    // ── Registration Lambda (durable) — SQS consumer ─────────────────────────
     const registrationFn = new lambda.NodejsFunction(this, 'RegistrationFn', {
       entry: path.join(__dirname, '../../lambda/submit-registration/index.ts'),
       handler: 'handler',
@@ -109,13 +131,13 @@ export class PintwoodStack extends cdk.Stack {
         retentionPeriod: cdk.Duration.days(30),
       },
       environment: {
-        SSM_SPREADSHEET_ID:        `${ssmPrefix}/REGISTRATION_SPREADSHEET_ID`,
-        SSM_SHEET_NAME:            `${ssmPrefix}/REGISTRATION_SHEET_NAME`,
-        SSM_SA_EMAIL:              `${ssmPrefix}/GOOGLE_SERVICE_ACCOUNT_EMAIL`,
-        SSM_SA_KEY:                `${ssmPrefix}/GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY`,
-        SSM_SENDGRID_KEY:          `${ssmPrefix}/SENDGRID_API_KEY`,
-        SSM_RECAPTCHA_SECRET:      `${ssmPrefix}/RECAPTCHA_SECRET_KEY`,
-        DYNAMODB_TABLE_NAME:       registrationsTable.tableName,
+        SSM_SPREADSHEET_ID:         `${ssmPrefix}/REGISTRATION_SPREADSHEET_ID`,
+        SSM_SHEET_NAME:             `${ssmPrefix}/REGISTRATION_SHEET_NAME`,
+        SSM_SA_EMAIL:               `${ssmPrefix}/GOOGLE_SERVICE_ACCOUNT_EMAIL`,
+        SSM_SA_KEY:                 `${ssmPrefix}/GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY`,
+        SSM_SENDGRID_KEY:           `${ssmPrefix}/SENDGRID_API_KEY`,
+        SSM_RECAPTCHA_SECRET:       `${ssmPrefix}/RECAPTCHA_SECRET_KEY`,
+        DYNAMODB_TABLE_NAME:        registrationsTable.tableName,
         SNS_NOTIFICATION_TOPIC_ARN: notificationTopic.topicArn,
       },
       bundling: {
@@ -136,15 +158,16 @@ export class PintwoodStack extends cdk.Stack {
       iam.ManagedPolicy.fromAwsManagedPolicyName('service-role/AWSLambdaBasicDurableExecutionRolePolicy'),
     );
 
-    // Publish a version and create a prod alias (durable functions require qualified ARNs)
-    const registrationFnVersion = registrationFn.currentVersion;
+    // Durable functions require a qualified ARN — publish a version + alias
     const registrationFnAlias = new lambdaBase.Alias(this, 'RegistrationFnProdAlias', {
       aliasName: 'prod',
-      version: registrationFnVersion,
+      version: registrationFn.currentVersion,
     });
 
-    // Note: permission to allow API Gateway to invoke the Lambda alias is added
-    // after the `httpApi` is created below because it requires the API's ARN.
+    // Trigger the durable Lambda from SQS
+    registrationFnAlias.addEventSource(new SqsEventSource(registrationQueue, {
+      batchSize: 1,
+    }));
 
     // Grant Lambda read access to each SSM SecureString
     for (const param of [spreadsheetId, sheetName, saEmail, saKey, sendgridKey, recaptchaSecret]) {
@@ -172,14 +195,7 @@ export class PintwoodStack extends cdk.Stack {
     httpApi.addRoutes({
       path: '/submit-registration',
       methods: [HttpMethod.POST],
-      integration: new HttpLambdaIntegration('RegistrationIntegration', registrationFnAlias),
-    });
-
-    // Ensure API Gateway can invoke the Lambda alias (HttpApi integrations require explicit permission)
-    registrationFnAlias.addPermission('AllowApiGatewayInvoke', {
-      principal: new iam.ServicePrincipal('apigateway.amazonaws.com'),
-      action: 'lambda:InvokeFunction',
-      sourceArn: httpApi.arnForExecuteApi(), // already includes /*/*/*
+      integration: new HttpLambdaIntegration('RegistrationIntegration', acceptRegistrationFn),
     });
 
     // Apply stage-level throttling to protect Lambda from excessive invocations
@@ -199,7 +215,8 @@ export class PintwoodStack extends cdk.Stack {
         httpMethod: '$context.httpMethod',
         path: '$context.path',
         status: '$context.status',
-        latency: '$context.responseLatency'
+        latency: '$context.responseLatency',
+        integrationError: '$context.integrationErrorMessage',
       }),
     };
 

@@ -8,6 +8,7 @@ import sgMail from '@sendgrid/mail';
 import Handlebars from 'handlebars';
 import { readFileSync } from 'fs';
 import { join } from 'path';
+import { SQSEvent } from 'aws-lambda';
 import { withDurableExecution, DurableContext } from '@aws/durable-execution-sdk-js';
 
 const ssm = new SSMClient({});
@@ -35,18 +36,8 @@ function countCars(body: Record<string, string>): { stock_cars: number; outlaw_c
   return { stock_cars, outlaw_cars };
 }
 
-export const handler = withDurableExecution(async (event: { body: string | null }, context: DurableContext) => {
-  const corsHeaders = {
-    'Access-Control-Allow-Origin': '*',
-    'Content-Type': 'application/json',
-  };
-
-  const body = JSON.parse((event as any).body ?? '{}');
-
-  // Honeypot check: if the hidden 'url' field is filled, treat as bot — silently succeed
-  if (body['url']) {
-    return { statusCode: 200, headers: corsHeaders, body: JSON.stringify({ success: true }) };
-  }
+export const handler = withDurableExecution(async (event: SQSEvent, context: DurableContext) => {
+  const body = JSON.parse(event.Records[0].body);
 
   const { name, email, phone, sponsorName, sponsorLevel } = body;
   const { stock_cars, outlaw_cars } = countCars(body);
@@ -107,5 +98,5 @@ export const handler = withDurableExecution(async (event: { body: string | null 
     }));
   });
 
-  return { statusCode: 200, headers: corsHeaders, body: JSON.stringify({ success: true }) };
+  return { batchItemFailures: [] };
 });
