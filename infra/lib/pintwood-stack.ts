@@ -12,6 +12,7 @@ import { HttpApi, HttpMethod, CorsHttpMethod } from 'aws-cdk-lib/aws-apigatewayv
 import * as apigatewayv2 from 'aws-cdk-lib/aws-apigatewayv2';
 import { HttpLambdaIntegration } from 'aws-cdk-lib/aws-apigatewayv2-integrations';
 import * as ssm from 'aws-cdk-lib/aws-ssm';
+import * as logs from 'aws-cdk-lib/aws-logs';
 import { Construct } from 'constructs';
 import * as path from 'path';
 
@@ -162,6 +163,12 @@ export class PintwoodStack extends cdk.Stack {
       },
     });
 
+    // Create a CloudWatch Log Group for API access logs
+    const apiAccessLogGroup = new logs.LogGroup(this, 'HttpApiAccessLogs', {
+      removalPolicy: cdk.RemovalPolicy.DESTROY,
+      retention: logs.RetentionDays.ONE_WEEK,
+    });
+
     httpApi.addRoutes({
       path: '/submit-registration',
       methods: [HttpMethod.POST],
@@ -183,6 +190,23 @@ export class PintwoodStack extends cdk.Stack {
       throttlingRateLimit: 5,
       throttlingBurstLimit: 10,
     };
+
+    // Enable access logging for the HTTP API
+    cfnStage.accessLogSettings = {
+      destinationArn: apiAccessLogGroup.logGroupArn,
+      format: JSON.stringify({
+        requestId: '$context.requestId',
+        ip: '$context.identity.sourceIp',
+        requestTime: '$context.time',
+        httpMethod: '$context.httpMethod',
+        path: '$context.path',
+        status: '$context.status',
+        latency: '$context.responseLatency'
+      }),
+    };
+
+    // Allow API Gateway to write to the LogGroup
+    apiAccessLogGroup.grantWrite(new iam.ServicePrincipal('apigateway.amazonaws.com'));
 
     // ── Outputs ───────────────────────────────────────────────────────────────
     new cdk.CfnOutput(this, 'CloudFrontDomain', {
