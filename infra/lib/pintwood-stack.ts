@@ -142,6 +142,15 @@ export class PintwoodStack extends cdk.Stack {
       version: registrationFnVersion,
     });
 
+    // Ensure API Gateway can invoke the Lambda alias (HttpApi integrations require explicit permission)
+    registrationFnAlias.addPermission('AllowApiGatewayInvoke', {
+      principal: new iam.ServicePrincipal('apigateway.amazonaws.com'),
+      action: 'lambda:InvokeFunction',
+      // Allow invocations from this HTTP API (all routes/stages)
+      // arnForExecuteApi returns arn:aws:execute-api:${region}:${account}:${apiId}
+      sourceArn: `${httpApi.arnForExecuteApi()}/*/*`,
+    });
+
     // Grant Lambda read access to each SSM SecureString
     for (const param of [spreadsheetId, sheetName, saEmail, saKey, sendgridKey, recaptchaSecret]) {
       param.grantRead(registrationFn);
