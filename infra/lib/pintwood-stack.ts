@@ -179,9 +179,7 @@ export class PintwoodStack extends cdk.Stack {
     registrationFnAlias.addPermission('AllowApiGatewayInvoke', {
       principal: new iam.ServicePrincipal('apigateway.amazonaws.com'),
       action: 'lambda:InvokeFunction',
-      // Allow invocations from this HTTP API (all routes/stages)
-      // arnForExecuteApi returns arn:aws:execute-api:${region}:${account}:${apiId}
-      sourceArn: `${httpApi.arnForExecuteApi()}/*/*`,
+      sourceArn: httpApi.arnForExecuteApi(), // already includes /*/*/*
     });
 
     // Apply stage-level throttling to protect Lambda from excessive invocations
