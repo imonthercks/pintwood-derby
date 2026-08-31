@@ -59,9 +59,12 @@ export const handler = withDurableExecution(async (event: { body: string | null 
 
   const { name, email, phone, sponsorName, sponsorLevel } = body;
   const { stock_cars, outlaw_cars } = countCars(body);
-  const registrationId = crypto.randomUUID();
-  const submittedAt = new Date().toISOString();
-  const record = { ...body, stock_cars, outlaw_cars, registrationId, submittedAt };
+  const { ['g-recaptcha-response']: _recaptchaResponse, ...sanitizedBody } = body;
+  const { registrationId, submittedAt } = await context.step('init-registration', async () => ({
+    registrationId: crypto.randomUUID(),
+    submittedAt: new Date().toISOString(),
+  }));
+  const record = { ...sanitizedBody, stock_cars, outlaw_cars, registrationId, submittedAt };
 
   // ── Step 1: Persist to DynamoDB ───────────────────────────────────────────
   await context.step('save-to-dynamo', async () => {
