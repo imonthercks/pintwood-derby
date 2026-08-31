@@ -43,14 +43,17 @@ export const handler = withDurableExecution(async (event: { body: string | null 
 
   const body = JSON.parse((event as any).body ?? '{}');
 
-  // ── reCAPTCHA verification (outside steps — not idempotent-safe to retry) ──
-  const recaptchaSecret = await getParam(process.env.SSM_RECAPTCHA_SECRET!);
-  const verifyRes = await fetch(
-    `https://www.google.com/recaptcha/api/siteverify?secret=${encodeURIComponent(recaptchaSecret)}&response=${encodeURIComponent(body['g-recaptcha-response'] ?? '')}`,
-    { method: 'POST' },
-  );
-  const { success } = (await verifyRes.json()) as { success: boolean };
-  if (!success) {
+  // ── Step: reCAPTCHA verification (memoized by durable execution) ───────────
+  const recaptchaOk = await context.step('verify-recaptcha', async () => {
+    const recaptchaSecret = await getParam(process.env.SSM_RECAPTCHA_SECRET!);
+    const verifyRes = await fetch(
+      `https://www.google.com/recaptcha/api/siteverify?secret=${encodeURIComponent(recaptchaSecret)}&response=${encodeURIComponent(body['g-recaptcha-response'] ?? '')}`,
+      { method: 'POST' },
+    );
+    const { success } = (await verifyRes.json()) as { success: boolean };
+    return success;
+  });
+  if (!recaptchaOk) {
     return { statusCode: 400, headers: corsHeaders, body: JSON.stringify({ error: 'reCAPTCHA verification failed' }) };
   }
 
