@@ -62,18 +62,7 @@ header_menu: true
         }
 </style>
 <script>
-        var onSubmit = function(token) {
-          console.log('success!');
-          document.getElementById("registration_form").dispatchEvent(new Event('recaptcha-verified'));
-        };
-
-        var onloadCallback = function() {
-          grecaptcha.render('submitButton', {
-            'sitekey' : '6LcyNY4qAAAAAAgwhNpEJfb5Mr8kuMb_F2eo8ISt',
-            'callback' : onSubmit,
-            'isolated' : true
-          });
-        };
+                // client-side: no reCAPTCHA; use a server-side honeypot and client retry on 429
     </script>
 <form method="POST" id="registration_form">
     <label for="name">Name:</label>
@@ -110,12 +99,9 @@ header_menu: true
     </div>
     <span class="error-message" id="errorMessage"></span>
     <!-- honeypot field — bots fill it, humans don't -->
-    <input type="text" name="honey" style="display:none" tabindex="-1" autocomplete="off">
+    <input type="text" name="url" style="display:none" tabindex="-1" autocomplete="off">
     <button id="submitButton" type="submit">Submit</button>
 </form>
-<script src="https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit"
-        async defer>
-    </script>
 <script>
         // Show/hide sponsorship fields
         const sponsorshipCheckbox = document.getElementById("sponsorship");
@@ -134,37 +120,50 @@ header_menu: true
         const errorMessage = document.getElementById("errorMessage");
         const submitButton = document.getElementById("submitButton");
 
-        // Triggered after reCAPTCHA callback fires
-        form.addEventListener('recaptcha-verified', async () => {
+        // Plain submit handler with retry on HTTP 429 (exponential backoff + jitter)
+        form.addEventListener('submit', async (ev) => {
+            ev.preventDefault();
             submitButton.disabled = true;
             errorMessage.textContent = '';
 
             const data = {};
             new FormData(form).forEach((v, k) => { data[k] = v; });
-            // attach reCAPTCHA token
-            data['g-recaptcha-response'] = grecaptcha.getResponse();
-
             const apiEndpoint = {{< apiendpoint >}};
 
-            try {
-                const res = await fetch(apiEndpoint, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data),
-                });
-                if (res.ok) {
-                    window.location.href = '/registration-thankyou';
-                } else {
+            const maxRetries = 3;
+            for (let attempt = 0; attempt <= maxRetries; attempt++) {
+                try {
+                    const res = await fetch(apiEndpoint, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(data),
+                    });
+                    if (res.ok) {
+                        window.location.href = '/registration-thankyou';
+                        return;
+                    }
+                    if (res.status === 429) {
+                        if (attempt < maxRetries) {
+                            const base = 1000 * Math.pow(2, attempt); // 1s,2s,4s
+                            const jitter = Math.floor(Math.random() * 250);
+                            await new Promise(r => setTimeout(r, base + jitter));
+                            continue;
+                        }
+                        break;
+                    }
                     const json = await res.json().catch(() => ({}));
                     errorMessage.textContent = json.error || 'Submission failed. Please try again.';
                     submitButton.disabled = false;
-                    grecaptcha.reset();
+                    return;
+                } catch (e) {
+                    errorMessage.textContent = 'Network error. Please try again.';
+                    submitButton.disabled = false;
+                    return;
                 }
-            } catch (e) {
-                errorMessage.textContent = 'Network error. Please try again.';
-                submitButton.disabled = false;
-                grecaptcha.reset();
             }
+            // exhausted retries
+            errorMessage.textContent = 'Submission throttled. Please try again in a moment.';
+            submitButton.disabled = false;
         });
     </script>
 {{< /rawhtml >}}

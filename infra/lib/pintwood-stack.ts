@@ -9,6 +9,7 @@ import * as dynamodb from 'aws-cdk-lib/aws-dynamodb';
 import * as sns from 'aws-cdk-lib/aws-sns';
 import * as snsSubscriptions from 'aws-cdk-lib/aws-sns-subscriptions';
 import { HttpApi, HttpMethod, CorsHttpMethod } from 'aws-cdk-lib/aws-apigatewayv2';
+import * as apigatewayv2 from 'aws-cdk-lib/aws-apigatewayv2';
 import { HttpLambdaIntegration } from 'aws-cdk-lib/aws-apigatewayv2-integrations';
 import * as ssm from 'aws-cdk-lib/aws-ssm';
 import { Construct } from 'constructs';
@@ -163,6 +164,13 @@ export class PintwoodStack extends cdk.Stack {
       methods: [HttpMethod.POST],
       integration: new HttpLambdaIntegration('RegistrationIntegration', registrationFnAlias),
     });
+
+    // Apply stage-level throttling to protect Lambda from excessive invocations
+    const cfnStage = httpApi.defaultStage!.node.defaultChild as apigatewayv2.CfnStage;
+    cfnStage.defaultRouteSettings = {
+      throttlingRateLimit: 5,
+      throttlingBurstLimit: 10,
+    };
 
     // ── Outputs ───────────────────────────────────────────────────────────────
     new cdk.CfnOutput(this, 'CloudFrontDomain', {
