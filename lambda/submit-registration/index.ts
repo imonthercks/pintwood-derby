@@ -43,23 +43,14 @@ export const handler = withDurableExecution(async (event: { body: string | null 
 
   const body = JSON.parse((event as any).body ?? '{}');
 
-  // ── Step: reCAPTCHA verification (memoized by durable execution) ───────────
-  const recaptchaOk = await context.step('verify-recaptcha', async () => {
-    const recaptchaSecret = await getParam(process.env.SSM_RECAPTCHA_SECRET!);
-    const verifyRes = await fetch(
-      `https://www.google.com/recaptcha/api/siteverify?secret=${encodeURIComponent(recaptchaSecret)}&response=${encodeURIComponent(body['g-recaptcha-response'] ?? '')}`,
-      { method: 'POST' },
-    );
-    const { success } = (await verifyRes.json()) as { success: boolean };
-    return success;
-  });
-  if (!recaptchaOk) {
-    return { statusCode: 400, headers: corsHeaders, body: JSON.stringify({ error: 'reCAPTCHA verification failed' }) };
+  // Honeypot check: if the hidden 'url' field is filled, treat as bot — silently succeed
+  if (body['url']) {
+    return { statusCode: 200, headers: corsHeaders, body: JSON.stringify({ success: true }) };
   }
 
   const { name, email, phone, sponsorName, sponsorLevel } = body;
   const { stock_cars, outlaw_cars } = countCars(body);
-  const { ['g-recaptcha-response']: _recaptchaResponse, ...sanitizedBody } = body;
+  const { url: _hp, ...sanitizedBody } = body;
   const { registrationId, submittedAt } = await context.step('init-registration', async () => ({
     registrationId: crypto.randomUUID(),
     submittedAt: new Date().toISOString(),
