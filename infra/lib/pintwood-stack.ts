@@ -15,6 +15,7 @@ import * as sqs from 'aws-cdk-lib/aws-sqs';
 import { SqsEventSource } from 'aws-cdk-lib/aws-lambda-event-sources';
 import * as ssm from 'aws-cdk-lib/aws-ssm';
 import * as logs from 'aws-cdk-lib/aws-logs';
+import * as crypto from 'crypto';
 import { Construct } from 'constructs';
 import * as path from 'path';
 
@@ -48,6 +49,24 @@ export class PintwoodStack extends cdk.Stack {
       blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
       removalPolicy: cdk.RemovalPolicy.RETAIN,
       versioned: true,
+    });
+
+    // Secret shared between CloudFront and the accept Lambda — bots hitting APIGW directly won't have it
+    const originVerifySecret = crypto.randomBytes(32).toString('hex');
+
+    // CloudFront Function: block requests whose Origin header doesn't match the site
+    const originCheckFn = new cloudfront.Function(this, 'OriginCheckFn', {
+      code: cloudfront.FunctionCode.fromInline(`
+function handler(event) {
+  var origin = (event.request.headers.origin || {value:''}).value;
+  if (origin !== 'https://thepintwood.com' &&
+      !origin.match(/^https:\/\/[a-z0-9]+\.cloudfront\.net$/)) {
+    return { statusCode: 403, statusDescription: 'Forbidden' };
+  }
+  return event.request;
+}
+`),
+      runtime: cloudfront.FunctionRuntime.JS_2_0,
     });
 
     // ── CloudFront distribution ───────────────────────────────────────────────
@@ -182,7 +201,8 @@ export class PintwoodStack extends cdk.Stack {
     // ── API Gateway HTTP API ──────────────────────────────────────────────────
     const httpApi = new HttpApi(this, 'HttpApi', {
       corsPreflight: {
-        allowOrigins: ['*'],
+        // only the site's own domains can POST — tightened from '*'
+        allowOrigins: ['https://thepintwood.com', `https://${distribution.distributionDomainName}`],
         allowMethods: [CorsHttpMethod.POST],
         allowHeaders: ['Content-Type'],
       },
@@ -199,6 +219,30 @@ export class PintwoodStack extends cdk.Stack {
       methods: [HttpMethod.POST],
       integration: new HttpLambdaIntegration('RegistrationIntegration', acceptRegistrationFn),
     });
+
+    // ── Route /api/submit-registration through the existing CloudFront distribution ──
+    // CloudFront injects x-origin-verify; Lambda rejects requests missing it
+    const apiOrigin = new origins.HttpOrigin(
+      `${httpApi.apiId}.execute-api.${this.region}.amazonaws.com`,
+      {
+        customHeaders: { 'x-origin-verify': originVerifySecret },
+        protocolPolicy: cloudfront.OriginProtocolPolicy.HTTPS_ONLY,
+      },
+    );
+
+    distribution.addBehavior('/api/submit-registration', apiOrigin, {
+      allowedMethods: cloudfront.AllowedMethods.ALLOW_ALL,
+      cachePolicy: cloudfront.CachePolicy.CACHING_DISABLED,
+      originRequestPolicy: cloudfront.OriginRequestPolicy.ALL_VIEWER_EXCEPT_HOST_HEADER,
+      viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
+      functionAssociations: [{
+        function: originCheckFn,
+        eventType: cloudfront.FunctionEventType.VIEWER_REQUEST,
+      }],
+    });
+
+    // Pass the secret to the accept Lambda so it can reject direct APIGW calls
+    acceptRegistrationFn.addEnvironment('ORIGIN_VERIFY_SECRET', originVerifySecret);
 
     // Apply stage-level throttling to protect Lambda from excessive invocations
     const cfnStage = httpApi.defaultStage!.node.defaultChild as apigatewayv2.CfnStage;
@@ -231,8 +275,8 @@ export class PintwoodStack extends cdk.Stack {
       description: 'CloudFront domain for testing (use as HUGO_BASEURL)',
     });
     new cdk.CfnOutput(this, 'ApiEndpoint', {
-      value: httpApi.apiEndpoint + '/submit-registration',
-      description: 'API Gateway endpoint (use as HUGO_PARAMS_APIENDPOINT)',
+      value: `https://${distribution.distributionDomainName}/api/submit-registration`,
+      description: 'CloudFront API endpoint (use as HUGO_PARAMS_APIENDPOINT)',
     });
     new cdk.CfnOutput(this, 'SiteBucketName', {
       value: siteBucket.bucketName,
