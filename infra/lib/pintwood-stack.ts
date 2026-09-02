@@ -52,21 +52,6 @@ export class PintwoodStack extends cdk.Stack {
     });
 
 
-    // CloudFront Function: block requests whose Origin header doesn't match the site
-    const originCheckFn = new cloudfront.Function(this, 'OriginCheckFn', {
-      code: cloudfront.FunctionCode.fromInline(`
-function handler(event) {
-  var origin = (event.request.headers.origin || {value:''}).value;
-  if (origin !== 'https://thepintwood.com' &&
-      !origin.match(/^https:\/\/[a-z0-9]+\.cloudfront\.net$/)) {
-    return { statusCode: 403, statusDescription: 'Forbidden' };
-  }
-  return event.request;
-}
-`),
-      runtime: cloudfront.FunctionRuntime.JS_2_0,
-    });
-
     // ── CloudFront distribution ───────────────────────────────────────────────
     // Web ACL auto-created by the console when the CloudFront pricing plan was enabled.
     // Distributions with a pricing plan subscription must reference a web ACL, so it
@@ -238,10 +223,6 @@ function handler(event) {
       cachePolicy: cloudfront.CachePolicy.CACHING_DISABLED,
       originRequestPolicy: cloudfront.OriginRequestPolicy.ALL_VIEWER_EXCEPT_HOST_HEADER,
       viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
-      functionAssociations: [{
-        function: originCheckFn,
-        eventType: cloudfront.FunctionEventType.VIEWER_REQUEST,
-      }],
     });
 
     // No custom origin verification header is used; accept Lambda will rely on
