@@ -51,8 +51,6 @@ export class PintwoodStack extends cdk.Stack {
       versioned: true,
     });
 
-    // Secret shared between CloudFront and the accept Lambda — bots hitting APIGW directly won't have it
-    const originVerifySecret = crypto.randomBytes(32).toString('hex');
 
     // CloudFront Function: block requests whose Origin header doesn't match the site
     const originCheckFn = new cloudfront.Function(this, 'OriginCheckFn', {
@@ -221,11 +219,10 @@ function handler(event) {
     });
 
     // ── Route /api/submit-registration through the existing CloudFront distribution ──
-    // CloudFront injects x-origin-verify; Lambda rejects requests missing it
+    // Route API traffic through CloudFront; origin header injection removed
     const apiOrigin = new origins.HttpOrigin(
       `${httpApi.apiId}.execute-api.${this.region}.amazonaws.com`,
       {
-        customHeaders: { 'x-origin-verify': originVerifySecret },
         protocolPolicy: cloudfront.OriginProtocolPolicy.HTTPS_ONLY,
       },
     );
@@ -241,8 +238,8 @@ function handler(event) {
       }],
     });
 
-    // Pass the secret to the accept Lambda so it can reject direct APIGW calls
-    acceptRegistrationFn.addEnvironment('ORIGIN_VERIFY_SECRET', originVerifySecret);
+    // No custom origin verification header is used; accept Lambda will rely on
+    // standard checks (honeypot + request validation).
 
     // Apply stage-level throttling to protect Lambda from excessive invocations
     const cfnStage = httpApi.defaultStage!.node.defaultChild as apigatewayv2.CfnStage;
