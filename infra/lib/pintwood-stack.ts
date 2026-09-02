@@ -192,11 +192,11 @@ function handler(event) {
 
     // Grant Lambda read access to each SSM SecureString
     for (const param of [spreadsheetId, sheetName, saEmail, saKey, sendgridKey, recaptchaSecret]) {
-      param.grantRead(registrationFn);
+      param.grantRead(registrationFnAlias);
     }
 
-    registrationsTable.grantWriteData(registrationFn);
-    notificationTopic.grantPublish(registrationFn);
+    registrationsTable.grantWriteData(registrationFnAlias);
+    notificationTopic.grantPublish(registrationFnAlias);
 
     // ── API Gateway HTTP API ──────────────────────────────────────────────────
     const httpApi = new HttpApi(this, 'HttpApi', {

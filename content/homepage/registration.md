@@ -120,7 +120,6 @@ header_menu: true
         const errorMessage = document.getElementById("errorMessage");
         const submitButton = document.getElementById("submitButton");
 
-        // Plain submit handler with retry on HTTP 429 (exponential backoff + jitter)
         form.addEventListener('submit', async (ev) => {
             ev.preventDefault();
             submitButton.disabled = true;
@@ -130,39 +129,25 @@ header_menu: true
             new FormData(form).forEach((v, k) => { data[k] = v; });
             const apiEndpoint = {{< apiendpoint >}};
 
-            const maxRetries = 3;
-            for (let attempt = 0; attempt <= maxRetries; attempt++) {
-                try {
-                    const res = await fetch(apiEndpoint, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(data),
-                    });
-                    if (res.ok) {
-                        window.location.href = '/registration-thankyou';
-                        return;
-                    }
-                    if (res.status === 429) {
-                        if (attempt < maxRetries) {
-                            const base = 1000 * Math.pow(2, attempt); // 1s,2s,4s
-                            const jitter = Math.floor(Math.random() * 250);
-                            await new Promise(r => setTimeout(r, base + jitter));
-                            continue;
-                        }
-                        break;
-                    }
-                    const json = await res.json().catch(() => ({}));
-                    errorMessage.textContent = json.error || 'Submission failed. Please try again.';
-                    submitButton.disabled = false;
-                    return;
-                } catch (e) {
-                    errorMessage.textContent = 'Network error. Please try again.';
-                    submitButton.disabled = false;
+            try {
+                const res = await fetch(apiEndpoint, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data),
+                });
+                if (res.ok) {
+                    window.location.href = '/registration-thankyou';
                     return;
                 }
+                if (res.status === 429) {
+                    errorMessage.textContent = 'Too many requests. Please wait a moment and try submitting again.';
+                } else {
+                    const json = await res.json().catch(() => ({}));
+                    errorMessage.textContent = json.error || 'Submission failed. Please try again.';
+                }
+            } catch (e) {
+                errorMessage.textContent = 'Network error. Please try again.';
             }
-            // exhausted retries
-            errorMessage.textContent = 'Submission throttled. Please try again in a moment.';
             submitButton.disabled = false;
         });
     </script>
