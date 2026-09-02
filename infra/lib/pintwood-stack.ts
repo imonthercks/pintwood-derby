@@ -201,8 +201,8 @@ function handler(event) {
     // ── API Gateway HTTP API ──────────────────────────────────────────────────
     const httpApi = new HttpApi(this, 'HttpApi', {
       corsPreflight: {
-        // only the site's own domains can POST — tightened from '*'
-        allowOrigins: ['https://thepintwood.com', `https://${distribution.distributionDomainName}`],
+        // Actual origin enforcement is done by the CloudFront Function + x-origin-verify secret
+        allowOrigins: ['*'],
         allowMethods: [CorsHttpMethod.POST],
         allowHeaders: ['Content-Type'],
       },
