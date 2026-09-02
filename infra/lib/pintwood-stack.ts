@@ -68,7 +68,13 @@ function handler(event) {
     });
 
     // ── CloudFront distribution ───────────────────────────────────────────────
+    // Web ACL auto-created by the console when the CloudFront pricing plan was enabled.
+    // Distributions with a pricing plan subscription must reference a web ACL, so it
+    // must be declared here or CloudFormation will try to remove it on every update.
+    const webAclId = 'arn:aws:wafv2:us-east-1:880273153178:global/webacl/CreatedByCloudFront-96f872c0/b17ea745-4d25-44d9-a477-530cb2ef0b02';
+
     const distribution = new cloudfront.Distribution(this, 'Distribution', {
+      webAclId,
       defaultBehavior: {
         origin: origins.S3BucketOrigin.withOriginAccessControl(siteBucket),
         viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
