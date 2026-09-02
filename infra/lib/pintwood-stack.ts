@@ -204,7 +204,9 @@ export class PintwoodStack extends cdk.Stack {
     });
 
     httpApi.addRoutes({
-      path: '/submit-registration',
+      // CloudFront forwards the full request path, so this must match the
+      // /api/submit-registration path pattern of the CloudFront behavior below.
+      path: '/api/submit-registration',
       methods: [HttpMethod.POST],
       integration: new HttpLambdaIntegration('RegistrationIntegration', acceptRegistrationFn),
     });
