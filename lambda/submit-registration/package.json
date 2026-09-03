@@ -9,6 +9,7 @@
     "@aws-sdk/lib-dynamodb": "^3.1121.0",
     "@aws/durable-execution-sdk-js": "^2.3.0",
     "@sendgrid/mail": "^7.7.0",
+    "resend": "^6.25.0",
     "google-auth-library": "^9.0.0",
     "google-spreadsheet": "^4.0.2",
     "handlebars": "^4.7.8"

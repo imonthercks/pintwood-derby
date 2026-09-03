@@ -4,7 +4,7 @@ import { DynamoDBDocumentClient, PutCommand } from '@aws-sdk/lib-dynamodb';
 import { SNSClient, PublishCommand } from '@aws-sdk/client-sns';
 import { GoogleSpreadsheet } from 'google-spreadsheet';
 import { JWT } from 'google-auth-library';
-import sgMail from '@sendgrid/mail';
+import { Resend } from 'resend';
 import Handlebars from 'handlebars';
 import { readFileSync } from 'fs';
 import { join } from 'path';
@@ -79,15 +79,17 @@ export const handler = withDurableExecution(async (event: SQSEvent, context: Dur
 
   // ── Step 3: Send confirmation email via SendGrid ──────────────────────────
   await context.step('send-confirmation-email', async () => {
-    const sendgridApiKey = await getParam(process.env.SSM_SENDGRID_KEY!);
-    sgMail.setApiKey(sendgridApiKey);
-    await sgMail.send({
-      to: email,
+    const resendApiKey = await getParam(process.env.SSM_RESEND_KEY!);
+
+    const resend = new Resend('••••••••••••••••••••••••••••••••••••');
+
+    resend.emails.send({
       from: 'no-reply@thepintwood.com',
+      to: email,
       subject: 'Your Pintwood Derby Registration',
       html: emailTemplate({ name, email, phone, sponsorName, sponsorLevel, stock_cars, outlaw_cars }),
     });
-  });
+ });
 
   // ── Step 4: Publish notification to SNS ──────────────────────────────────
   await context.step('publish-sns-notification', async () => {

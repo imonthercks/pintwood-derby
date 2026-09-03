@@ -101,6 +101,10 @@ export class PintwoodStack extends cdk.Stack {
       this, 'SendgridKey',
       { parameterName: `${ssmPrefix}/SENDGRID_API_KEY` },
     );
+    const resendKey = ssm.StringParameter.fromSecureStringParameterAttributes(
+      this, 'ResendKey',
+      { parameterName: `${ssmPrefix}/RESEND_API_KEY` },
+    );
     const recaptchaSecret = ssm.StringParameter.fromSecureStringParameterAttributes(
       this, 'RecaptchaSecret',
       { parameterName: `${ssmPrefix}/RECAPTCHA_SECRET_KEY` },
@@ -145,7 +149,7 @@ export class PintwoodStack extends cdk.Stack {
         SSM_SHEET_NAME:             `${ssmPrefix}/REGISTRATION_SHEET_NAME`,
         SSM_SA_EMAIL:               `${ssmPrefix}/GOOGLE_SERVICE_ACCOUNT_EMAIL`,
         SSM_SA_KEY:                 `${ssmPrefix}/GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY`,
-        SSM_SENDGRID_KEY:           `${ssmPrefix}/SENDGRID_API_KEY`,
+        SSM_RESEND_KEY:             `${ssmPrefix}/RESEND_API_KEY`,
         SSM_RECAPTCHA_SECRET:       `${ssmPrefix}/RECAPTCHA_SECRET_KEY`,
         DYNAMODB_TABLE_NAME:        registrationsTable.tableName,
         SNS_NOTIFICATION_TOPIC_ARN: notificationTopic.topicArn,
@@ -180,7 +184,7 @@ export class PintwoodStack extends cdk.Stack {
     }));
 
     // Grant Lambda read access to each SSM SecureString
-    for (const param of [spreadsheetId, sheetName, saEmail, saKey, sendgridKey, recaptchaSecret]) {
+    for (const param of [spreadsheetId, sheetName, saEmail, saKey, resendKey, recaptchaSecret]) {
       param.grantRead(registrationFnAlias);
     }
 
