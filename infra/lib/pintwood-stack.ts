@@ -97,10 +97,6 @@ export class PintwoodStack extends cdk.Stack {
       this, 'SAKey',
       { parameterName: `${ssmPrefix}/GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY` },
     );
-    const sendgridKey = ssm.StringParameter.fromSecureStringParameterAttributes(
-      this, 'SendgridKey',
-      { parameterName: `${ssmPrefix}/SENDGRID_API_KEY` },
-    );
     const resendKey = ssm.StringParameter.fromSecureStringParameterAttributes(
       this, 'ResendKey',
       { parameterName: `${ssmPrefix}/RESEND_API_KEY` },

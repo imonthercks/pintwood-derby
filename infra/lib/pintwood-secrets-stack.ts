@@ -7,6 +7,6 @@
 //   /pintwood/REGISTRATION_SHEET_NAME
 //   /pintwood/GOOGLE_SERVICE_ACCOUNT_EMAIL
 //   /pintwood/GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY
-//   /pintwood/SENDGRID_API_KEY
+//   /pintwood/RESEND_API_KEY
 //   /pintwood/RECAPTCHA_SECRET_KEY
 export {};
