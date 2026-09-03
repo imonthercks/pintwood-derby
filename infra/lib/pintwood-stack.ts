@@ -58,12 +58,32 @@ export class PintwoodStack extends cdk.Stack {
     // must be declared here or CloudFormation will try to remove it on every update.
     const webAclId = 'arn:aws:wafv2:us-east-1:880273153178:global/webacl/CreatedByCloudFront-96f872c0/b17ea745-4d25-44d9-a477-530cb2ef0b02';
 
+    // S3 REST origin has no directory-index resolution beyond the distribution root,
+    // so clean URLs like /registration-thankyou need to be rewritten to their index.html.
+    const urlRewriteFunction = new cloudfront.Function(this, 'UrlRewriteFunction', {
+      code: cloudfront.FunctionCode.fromInline(`
+function handler(event) {
+  var request = event.request;
+  var uri = request.uri;
+  if (uri.endsWith('/')) {
+    request.uri += 'index.html';
+  } else if (!uri.includes('.')) {
+    request.uri += '/index.html';
+  }
+  return request;
+}
+`),
+    });
+
     const distribution = new cloudfront.Distribution(this, 'Distribution', {
       webAclId,
       defaultBehavior: {
         origin: origins.S3BucketOrigin.withOriginAccessControl(siteBucket),
         viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
         cachePolicy: cloudfront.CachePolicy.CACHING_OPTIMIZED,
+        functionAssociations: [
+          { function: urlRewriteFunction, eventType: cloudfront.FunctionEventType.VIEWER_REQUEST },
+        ],
       },
       defaultRootObject: 'index.html',
       errorResponses: [
