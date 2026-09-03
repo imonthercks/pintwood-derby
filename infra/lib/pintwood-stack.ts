@@ -1,5 +1,6 @@
 import * as cdk from 'aws-cdk-lib';
 import * as s3 from 'aws-cdk-lib/aws-s3';
+import * as acm from 'aws-cdk-lib/aws-certificatemanager';
 import * as cloudfront from 'aws-cdk-lib/aws-cloudfront';
 import * as origins from 'aws-cdk-lib/aws-cloudfront-origins';
 import * as lambda from 'aws-cdk-lib/aws-lambda-nodejs';
@@ -28,6 +29,18 @@ export class PintwoodStack extends cdk.Stack {
     super(scope, id, props);
 
     const ssmPrefix = `/pintwood/${props.stackEnv}`;
+    // Custom domain only applies to production; staging stays on its *.cloudfront.net domain.
+    const isProduction = props.stackEnv === 'production';
+    const domainName = 'thepintwood.com';
+
+    // Must be requested in us-east-1 for CloudFront; validate by adding the printed
+    // CNAME to Netlify DNS while `cdk deploy` waits for the cert to be issued.
+    const certificate = isProduction
+      ? new acm.Certificate(this, 'SiteCertificate', {
+          domainName,
+          validation: acm.CertificateValidation.fromDns(),
+        })
+      : undefined;
 
     // ── DynamoDB registrations table ─────────────────────────────────────────
     const registrationsTable = new dynamodb.Table(this, 'RegistrationsTable', {
@@ -77,6 +90,8 @@ function handler(event) {
 
     const distribution = new cloudfront.Distribution(this, 'Distribution', {
       webAclId,
+      domainNames: isProduction ? [domainName] : undefined,
+      certificate,
       defaultBehavior: {
         origin: origins.S3BucketOrigin.withOriginAccessControl(siteBucket),
         viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
@@ -292,5 +307,11 @@ function handler(event) {
       value: distribution.distributionId,
       description: 'CloudFront distribution ID for cache invalidation',
     });
+    if (certificate) {
+      new cdk.CfnOutput(this, 'CertificateArn', {
+        value: certificate.certificateArn,
+        description: 'ACM certificate ARN — check ACM console (us-east-1) for the DNS validation CNAME',
+      });
+    }
   }
 }
