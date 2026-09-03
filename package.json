@@ -1,9 +1,9 @@
 {
   "dependencies": {
     "@sendgrid/mail": "^7.7.0",
-    "resend": "^6.25.0",
     "google-spreadsheet": "^4.0.2",
-    "googleapis": "^126.0.1"
+    "googleapis": "^126.0.1",
+    "resend": "^6.25.0"
   },
   "devDependencies": {
     "esbuild": "^0.28.2"
