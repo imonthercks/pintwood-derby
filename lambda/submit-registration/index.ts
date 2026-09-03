@@ -74,6 +74,14 @@ export const handler = withDurableExecution(async (event: SQSEvent, context: Dur
     const sheet =
       doc.sheetsByTitle[sheetName] ??
       (await doc.addSheet({ title: sheetName, headerValues: Object.keys(record) }));
+
+    // addRow silently drops any record key missing from the header row, so extend it first
+    await sheet.loadHeaderRow();
+    const missingHeaders = Object.keys(record).filter((key) => !sheet.headerValues.includes(key));
+    if (missingHeaders.length > 0) {
+      await sheet.setHeaderRow([...sheet.headerValues, ...missingHeaders]);
+    }
+
     await sheet.addRow(record);
   });
 
