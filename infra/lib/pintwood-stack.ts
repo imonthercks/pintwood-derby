@@ -15,7 +15,6 @@ import { HttpLambdaIntegration } from 'aws-cdk-lib/aws-apigatewayv2-integrations
 import * as sqs from 'aws-cdk-lib/aws-sqs';
 import { SqsEventSource } from 'aws-cdk-lib/aws-lambda-event-sources';
 import * as ssm from 'aws-cdk-lib/aws-ssm';
-import * as logs from 'aws-cdk-lib/aws-logs';
 import * as crypto from 'crypto';
 import { Construct } from 'constructs';
 import * as path from 'path';
@@ -232,12 +231,6 @@ function handler(event) {
       },
     });
 
-    // Create a CloudWatch Log Group for API access logs
-    const apiAccessLogGroup = new logs.LogGroup(this, 'HttpApiAccessLogs', {
-      removalPolicy: cdk.RemovalPolicy.DESTROY,
-      retention: logs.RetentionDays.ONE_WEEK,
-    });
-
     httpApi.addRoutes({
       // CloudFront forwards the full request path, so this must match the
       // /api/submit-registration path pattern of the CloudFront behavior below.
@@ -271,24 +264,6 @@ function handler(event) {
       throttlingRateLimit: 5,
       throttlingBurstLimit: 10,
     };
-
-    // Enable access logging for the HTTP API
-    cfnStage.accessLogSettings = {
-      destinationArn: apiAccessLogGroup.logGroupArn,
-      format: JSON.stringify({
-        requestId: '$context.requestId',
-        ip: '$context.identity.sourceIp',
-        requestTime: '$context.requestTime',
-        httpMethod: '$context.httpMethod',
-        path: '$context.path',
-        status: '$context.status',
-        latency: '$context.responseLatency',
-        integrationError: '$context.integrationErrorMessage',
-      }),
-    };
-
-    // Allow API Gateway to write to the LogGroup
-    apiAccessLogGroup.grantWrite(new iam.ServicePrincipal('apigateway.amazonaws.com'));
 
     // ── Outputs ───────────────────────────────────────────────────────────────
     new cdk.CfnOutput(this, 'CloudFrontDomain', {
