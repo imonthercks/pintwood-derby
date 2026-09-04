@@ -71,6 +71,7 @@ export class PintwoodStack extends cdk.Stack {
     // staging keeps reusing the ACL the console auto-created when the pricing plan was enabled.
     const webAcl = isProduction
       ? new wafv2.CfnWebACL(this, 'SiteWebAcl', {
+          name: `pintwood-${props.stackEnv}-site-web-acl`,
           defaultAction: { allow: {} },
           scope: 'CLOUDFRONT',
           visibilityConfig: {
