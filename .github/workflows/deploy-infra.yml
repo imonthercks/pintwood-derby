@@ -38,13 +38,17 @@ jobs:
         # invokes esbuild with the repo root as its working directory.
         run: npm ci
 
-      - name: Install Lambda dependencies
+      - name: Install Lambda dependencies (submit-registration)
         # esbuild resolves each Lambda's runtime dependencies (e.g. @aws-sdk/client-ssm,
         # google-auth-library, handlebars) by walking up from the entry file, so they
         # must be installed here even though the root deps are installed above.
         run: npm ci
         working-directory: lambda/submit-registration
 
+      - name: Install Lambda dependencies (accept-registration)
+        # Required for local bundling of AcceptRegistrationFn (dependency lives in lambda/accept-registration).
+        run: npm ci
+        working-directory: lambda/accept-registration
       - name: Install CDK dependencies
         run: npm ci
         working-directory: infra

@@ -10,12 +10,17 @@ const corsHeaders = {
 export const handler = async (event: { body: string | null; headers?: Record<string, string> }) => {
   // Reject direct APIGW calls that bypass CloudFront
   const verifySecret = process.env.ORIGIN_VERIFY_SECRET;
-  if (verifySecret && event.headers?.['x-origin-verify'] !== verifySecret) {
+  const originVerifyHeader = event.headers?.['x-origin-verify'] ?? event.headers?.['X-Origin-Verify'];
+  if (verifySecret && originVerifyHeader !== verifySecret) {
     return { statusCode: 403, headers: corsHeaders, body: JSON.stringify({ error: 'Forbidden' }) };
   }
 
-  const body = JSON.parse((event as any).body ?? '{}');
-
+  let body: any;
+  try {
+    body = JSON.parse(event.body ?? '{}');
+  } catch {
+    return { statusCode: 400, headers: corsHeaders, body: JSON.stringify({ error: 'Invalid JSON body' }) };
+  }
   // Honeypot: silently succeed so bots don't retry
   if (body['url']) {
     return { statusCode: 200, headers: corsHeaders, body: JSON.stringify({ success: true }) };

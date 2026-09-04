@@ -17,7 +17,9 @@ const sns = new SNSClient({});
 
 async function getParam(name: string): Promise<string> {
   const res = await ssm.send(new GetParameterCommand({ Name: name, WithDecryption: true }));
-  return res.Parameter!.Value!;
+  const value = res.Parameter?.Value;
+  if (!value) throw new Error(`Missing/empty SSM parameter: ${name}`);
+  return value;
 }
 
 // Compiled once on cold start
@@ -87,11 +89,7 @@ export const handler = withDurableExecution(async (event: SQSEvent, context: Dur
 
   // ── Step 3: Send confirmation email via Resend ────────────────────────────
   await context.step('send-confirmation-email', async () => {
-    const resendApiKey = await getParam(process.env.SSM_RESEND_KEY!);
-
-    const resend = new Resend(resendApiKey);
-
-    resend.emails.send({
+    await resend.emails.send({
       from: 'no-reply@thepintwood.com',
       to: email,
       subject: 'Your Pintwood Derby Registration',
