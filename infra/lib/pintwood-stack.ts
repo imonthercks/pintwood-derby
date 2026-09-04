@@ -15,6 +15,7 @@ import { HttpLambdaIntegration } from 'aws-cdk-lib/aws-apigatewayv2-integrations
 import * as sqs from 'aws-cdk-lib/aws-sqs';
 import { SqsEventSource } from 'aws-cdk-lib/aws-lambda-event-sources';
 import * as ssm from 'aws-cdk-lib/aws-ssm';
+import * as wafv2 from 'aws-cdk-lib/aws-wafv2';
 import * as crypto from 'crypto';
 import { Construct } from 'constructs';
 import * as path from 'path';
@@ -65,10 +66,23 @@ export class PintwoodStack extends cdk.Stack {
 
 
     // ── CloudFront distribution ───────────────────────────────────────────────
-    // Web ACL auto-created by the console when the CloudFront pricing plan was enabled.
-    // Distributions with a pricing plan subscription must reference a web ACL, so it
-    // must be declared here or CloudFormation will try to remove it on every update.
-    const webAclId = 'arn:aws:wafv2:us-east-1:880273153178:global/webacl/CreatedByCloudFront-96f872c0/b17ea745-4d25-44d9-a477-530cb2ef0b02';
+    // Distributions with a pricing plan subscription must reference a web ACL.
+    // Production gets its own managed WebACL (must live in us-east-1 for CLOUDFRONT scope);
+    // staging keeps reusing the ACL the console auto-created when the pricing plan was enabled.
+    const webAcl = isProduction
+      ? new wafv2.CfnWebACL(this, 'SiteWebAcl', {
+          defaultAction: { allow: {} },
+          scope: 'CLOUDFRONT',
+          visibilityConfig: {
+            cloudWatchMetricsEnabled: true,
+            metricName: 'PintwoodSiteWebAcl',
+            sampledRequestsEnabled: true,
+          },
+        })
+      : undefined;
+    const webAclId = webAcl
+      ? webAcl.attrArn
+      : 'arn:aws:wafv2:us-east-1:880273153178:global/webacl/CreatedByCloudFront-96f872c0/b17ea745-4d25-44d9-a477-530cb2ef0b02';
 
     // S3 REST origin has no directory-index resolution beyond the distribution root,
     // so clean URLs like /registration-thankyou need to be rewritten to their index.html.
