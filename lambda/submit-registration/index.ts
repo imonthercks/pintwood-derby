@@ -89,6 +89,10 @@ export const handler = withDurableExecution(async (event: SQSEvent, context: Dur
 
   // ── Step 3: Send confirmation email via Resend ────────────────────────────
   await context.step('send-confirmation-email', async () => {
+    const resendApiKey = await getParam(process.env.SSM_RESEND_KEY!);
+
+    const resend = new Resend(resendApiKey);
+
     await resend.emails.send({
       from: 'no-reply@thepintwood.com',
       to: email,
