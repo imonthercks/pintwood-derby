@@ -62,20 +62,9 @@ header_menu: true
         }
 </style>
 <script>
-        var onSubmit = function(token) {
-          console.log('success!');
-          document.getElementById("registration_form").submit();
-        };
-
-        var onloadCallback = function() {
-          grecaptcha.render('submitButton', {
-            'sitekey' : '6LcyNY4qAAAAAAgwhNpEJfb5Mr8kuMb_F2eo8ISt',
-            'callback' : onSubmit,
-            'isolated' : true
-          });
-        };
+                // client-side: no reCAPTCHA; use a server-side honeypot and client retry on 429
     </script>
-<form data-netlify="true" netlify-honeypot="honey" data-netlify-recaptcha="true" method="POST" action="/registration-thankyou" name="registration" id="registration_form">
+<form method="POST" id="registration_form">
     <label for="name">Name:</label>
     <input type="text" id="name" name="name" required="true"><br>
     <label for="numRacers">Number of Racers ($35 each):</label>
@@ -109,13 +98,12 @@ header_menu: true
         </select><br><br>
     </div>
     <span class="error-message" id="errorMessage"></span>
+    <!-- honeypot field — bots fill it, humans don't -->
+    <input type="text" name="url" style="display:none" tabindex="-1" autocomplete="off">
     <button id="submitButton" type="submit">Submit</button>
 </form>
-<script src="https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit"
-        async defer>
-    </script>
 <script>
-        // JavaScript to show/hide sponsorship fields based on checkbox
+        // Show/hide sponsorship fields
         const sponsorshipCheckbox = document.getElementById("sponsorship");
         const sponsorshipFields = document.getElementById("sponsorshipFields");
 
@@ -127,32 +115,40 @@ header_menu: true
             }
         });
 
-        // JavaScript to dynamically add car category fields based on the number of racers
-        /* const numRacersInput = document.getElementById("numRacers");
-        const recaptchaStatus = document.getElementById("g-recaptcha-response");
-        const validate = () => {
-            alert(recaptchaStatus.value);
-            let success = true;
-            let messageText = "";
-            const numRacers = Math.floor(numRacersInput.value, 5);
+        // Fetch-based form submission to API Gateway
+        const form = document.getElementById("registration_form");
+        const errorMessage = document.getElementById("errorMessage");
+        const submitButton = document.getElementById("submitButton");
 
-            return success;
-        }
+        form.addEventListener('submit', async (ev) => {
+            ev.preventDefault();
+            submitButton.disabled = true;
+            errorMessage.textContent = '';
 
-        const emailForm = document.getElementById("registration_form");
-        emailForm.addEventListener("submit", function (event) {
-            // Disable the submit button on first click
-            const submitButton = document.getElementById('submitButton');
-            submitButton.setAttribute("disabled", "true");
-            if (!validate()) {
-                event.preventDefault(); // Prevent form submission if email is invalid
-            
-                setTimeout(function () {
-                    submitButton.removeAttribute("disabled");
-                }, 1000); 
+            const data = {};
+            new FormData(form).forEach((v, k) => { data[k] = v; });
+            const apiEndpoint = {{< apiendpoint >}};
+
+            try {
+                const res = await fetch(apiEndpoint, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data),
+                });
+                if (res.ok) {
+                    window.location.href = '/registration-thankyou';
+                    return;
+                }
+                if (res.status === 429) {
+                    errorMessage.textContent = 'Too many requests. Please wait a moment and try submitting again.';
+                } else {
+                    const json = await res.json().catch(() => ({}));
+                    errorMessage.textContent = json.error || 'Submission failed. Please try again.';
+                }
+            } catch (e) {
+                errorMessage.textContent = 'Network error. Please try again.';
             }
-        });*/
-
-
+            submitButton.disabled = false;
+        });
     </script>
 {{< /rawhtml >}}
