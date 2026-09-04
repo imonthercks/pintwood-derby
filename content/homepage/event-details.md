@@ -10,6 +10,6 @@ header_menu: true
 Event rules are available in this [Downloadable Rules PDF](https://thepintwood.com/rules/Pintwood%20Derby%202026%20Official%20Rules.pdf)
 
 #### What does this event support?
-All proceeds from the SEAS Pintwood Derby goes to support Troop and Pack 726.
+All proceeds from the 726 Pintwood Derby go to support Troop and Pack 726.
 
 

@@ -9,7 +9,7 @@ header_use_video: false
 #header_logo: "images/chef-hat.png"
 #
 # Headers are safeHTML, you can use HTML tags such as b,i,u,br
-header_headline: "SEAS Pintwood Derby"
+header_headline: "726 Pintwood Derby"
 header_subheadline: "February 8th 2026"
 ---
   
