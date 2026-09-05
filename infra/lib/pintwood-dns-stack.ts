@@ -13,6 +13,7 @@ export class PintwoodDnsStack extends cdk.Stack {
     const hostedZone = new route53.PublicHostedZone(this, 'HostedZone', {
       zoneName: domainName,
     });
+    hostedZone.applyRemovalPolicy(cdk.RemovalPolicy.RETAIN);
 
     new cdk.CfnOutput(this, 'HostedZoneId', {
       value: hostedZone.hostedZoneId,
