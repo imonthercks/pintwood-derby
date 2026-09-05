@@ -39,6 +39,7 @@ jobs:
         run: |
           npx cdk deploy PintwoodDnsStack \
             --context dns=true \
+            --context resendDkimPublicKey="${{ secrets.RESEND_DKIM_PUBLIC_KEY }}" \
             --require-approval never \
             --outputs-file dns-outputs.json
         working-directory: infra

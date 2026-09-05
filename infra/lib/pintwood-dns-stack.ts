@@ -2,8 +2,14 @@ import * as cdk from 'aws-cdk-lib';
 import * as route53 from 'aws-cdk-lib/aws-route53';
 import { Construct } from 'constructs';
 
+export interface PintwoodDnsStackProps extends cdk.StackProps {
+  // Resend's DKIM public key for thepintwood.com; passed via context/secret rather
+  // than committed, since it's a domain-specific verification credential.
+  resendDkimPublicKey: string;
+}
+
 export class PintwoodDnsStack extends cdk.Stack {
-  constructor(scope: Construct, id: string, props?: cdk.StackProps) {
+  constructor(scope: Construct, id: string, props: PintwoodDnsStackProps) {
     super(scope, id, props);
 
     const domainName = 'thepintwood.com';
@@ -15,6 +21,28 @@ export class PintwoodDnsStack extends cdk.Stack {
     });
     hostedZone.applyRemovalPolicy(cdk.RemovalPolicy.RETAIN);
 
+    // ── Resend email-sending domain records ──────────────────────────────────
+    new route53.TxtRecord(this, 'ResendDkimRecord', {
+      zone: hostedZone,
+      recordName: 'resend._domainkey',
+      values: [`p=${props.resendDkimPublicKey}`],
+    });
+    new route53.CnameRecord(this, 'ResendRsendCname', {
+      zone: hostedZone,
+      recordName: 'rsend',
+      domainName: 'rsend.forge.rmta.net',
+    });
+    new route53.CnameRecord(this, 'ResendSendCname', {
+      zone: hostedZone,
+      recordName: 'send',
+      domainName: 'send.forge.rmta.net',
+    });
+    new route53.TxtRecord(this, 'DmarcRecord', {
+      zone: hostedZone,
+      recordName: '_dmarc',
+      values: ['v=DMARC1; p=none;'],
+    });
+
     new cdk.CfnOutput(this, 'HostedZoneId', {
       value: hostedZone.hostedZoneId,
       description: 'Pass as --context hostedZoneId=... when deploying PintwoodStack so it can create its alias records',
@@ -25,4 +53,5 @@ export class PintwoodDnsStack extends cdk.Stack {
     });
   }
 }
+
 

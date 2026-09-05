@@ -18,10 +18,13 @@ if (stackEnv) {
   });
 }
 
-// Pass -c dns=true to synthesize the DNS stack (just the hosted zone; each
-// PintwoodStack creates its own alias record once the zone exists).
+// Pass -c dns=true -c resendDkimPublicKey=... to synthesize the DNS stack (see deploy-dns.yml).
+// Each PintwoodStack creates its own alias record once the zone exists.
 if (app.node.tryGetContext('dns')) {
-  new PintwoodDnsStack(app, 'PintwoodDnsStack', { env });
+  new PintwoodDnsStack(app, 'PintwoodDnsStack', {
+    env,
+    resendDkimPublicKey: app.node.tryGetContext('resendDkimPublicKey'),
+  });
 }
 
 
