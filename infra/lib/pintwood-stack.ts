@@ -16,12 +16,17 @@ import * as sqs from 'aws-cdk-lib/aws-sqs';
 import { SqsEventSource } from 'aws-cdk-lib/aws-lambda-event-sources';
 import * as ssm from 'aws-cdk-lib/aws-ssm';
 import * as wafv2 from 'aws-cdk-lib/aws-wafv2';
+import * as route53 from 'aws-cdk-lib/aws-route53';
+import * as targets from 'aws-cdk-lib/aws-route53-targets';
 import * as crypto from 'crypto';
 import { Construct } from 'constructs';
 import * as path from 'path';
 
 export interface PintwoodStackProps extends cdk.StackProps {
   stackEnv: string;
+  // ID of the hosted zone created by PintwoodDnsStack; omit to skip creating alias records
+  // (e.g. on first deploy, before the DNS stack exists).
+  hostedZoneId?: string;
 }
 
 export class PintwoodStack extends cdk.Stack {
@@ -128,6 +133,20 @@ function handler(event) {
         },
       ],
     });
+
+    // ── Route53 alias record ─────────────────────────────────────────────────
+    // Production points the apex domain here; staging gets a subdomain. Both need
+    // A + AAAA aliases since CloudFront distributions are dual-stack.
+    if (props.hostedZoneId) {
+      const hostedZone = route53.PublicHostedZone.fromHostedZoneAttributes(this, 'HostedZone', {
+        hostedZoneId: props.hostedZoneId,
+        zoneName: domainName,
+      });
+      const recordName = isProduction ? undefined : 'staging';
+      const aliasTarget = route53.RecordTarget.fromAlias(new targets.CloudFrontTarget(distribution));
+      new route53.ARecord(this, 'AliasRecordV4', { zone: hostedZone, recordName, target: aliasTarget });
+      new route53.AaaaRecord(this, 'AliasRecordV6', { zone: hostedZone, recordName, target: aliasTarget });
+    }
 
     // ── SSM parameters (values written by deploy-secrets workflow) ────────────
     const spreadsheetId = ssm.StringParameter.fromSecureStringParameterAttributes(

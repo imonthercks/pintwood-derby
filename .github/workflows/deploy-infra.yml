@@ -53,10 +53,24 @@ jobs:
         run: npm ci
         working-directory: infra
 
+      - name: Read hosted zone ID from DNS stack (if deployed)
+        id: dns
+        run: |
+          zone_id=$(aws cloudformation describe-stacks \
+            --stack-name PintwoodDnsStack \
+            --query "Stacks[0].Outputs[?OutputKey=='HostedZoneId'].OutputValue" \
+            --output text 2>/dev/null || true)
+          echo "hosted_zone_id=$zone_id" >> "$GITHUB_OUTPUT"
+
       - name: CDK deploy
         run: |
+          extra_context=()
+          if [[ -n "${{ steps.dns.outputs.hosted_zone_id }}" ]]; then
+            extra_context+=(--context "hostedZoneId=${{ steps.dns.outputs.hosted_zone_id }}")
+          fi
           npx cdk deploy PintwoodStack-${{ inputs.environment }} \
             --context stackEnv=${{ inputs.environment }} \
+            "${extra_context[@]}" \
             --require-approval never \
             --outputs-file cdk-outputs.json
         working-directory: infra
