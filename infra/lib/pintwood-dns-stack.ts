@@ -22,10 +22,12 @@ export class PintwoodDnsStack extends cdk.Stack {
     hostedZone.applyRemovalPolicy(cdk.RemovalPolicy.RETAIN);
 
     // ── Resend email-sending domain records ──────────────────────────────────
+    const resendDkimTxt = `p=${props.resendDkimPublicKey}`;
+    const resendDkimTxtChunks = resendDkimTxt.match(/.{1,255}/g) ?? [resendDkimTxt];
     new route53.TxtRecord(this, 'ResendDkimRecord', {
       zone: hostedZone,
       recordName: 'resend._domainkey',
-      values: [`p=${props.resendDkimPublicKey}`],
+      values: resendDkimTxtChunks,
     });
     new route53.CnameRecord(this, 'ResendRsendCname', {
       zone: hostedZone,
